@@ -1,0 +1,6 @@
+*.bak
+*~
+.*.swp
+.build
+App-Dotfiles-*
+tmp
