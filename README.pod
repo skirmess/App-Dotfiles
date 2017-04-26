@@ -1,0 +1,219 @@
+=pod
+
+=head1 NAME
+
+dotf - dotfiles manager
+
+
+=head1 SYNOPSIS
+
+=over
+
+=item B<dotf> [B<-h> <homedir>] B<help>
+
+=item B<dotf> [B<-h> <homedir>] B<init> <url>
+
+=item B<dotf> [B<-h> <homedir>] B<status>
+
+=item B<dotf> [B<-h> <homedir>] B<update>
+
+=item B<dotf> [B<-h> <homedir>] B<version>
+
+=back
+
+=head1 DESCRIPTION
+
+The dotfiles manager B<dotf> helps you synchronize your precious dotfiles
+between multiple Unix systems.
+
+Your dotfiles will be maintained in one or multiple git repositories. Then
+L<GNU Stow|Stow> is used to create symlinks from the dotfiles to your home
+directory.
+
+L<GNU Stow|Stow> is used with the B<--adopt> option, which means that if
+someone or something replaces a symlink with a file, the file will be moved
+to the Git repository and the symlink will be recreated. Normally this
+should not be used but if one of your tools replaces the symlink, it will
+be automatically recreated.
+
+
+=head1 OPTIONS
+
+=over
+
+=item B<-h> I<homedir>
+
+Specifies the directory that should be used as your home directory. This
+is the directory in which the dotfiles will be managed.
+
+If not specified, B<dotf> defaults to your home directory as returned by L<File::HomeDir|File::HomeDir>.
+
+=back
+
+
+=head1 SUBCOMMANDS
+
+=head2 B<dotf> B<help>
+
+Prints the help page.
+
+=head2 B<dotf> B<init>
+
+The B<init> subcommand is used to initialize B<dotf> on a new account. It
+takes a URL as argument which can be cloned with Git. This repository
+I<url> will be cloned to F<~/.files/.config> and the I<master> branch
+will be checked out.
+
+B<dotf> expectes a file called F<modules.ini> in the root of this repository.
+
+=head2 B<dotf> B<status>
+
+The B<status> subcommand can be used to show the changes in all Git
+repositories used by B<dotf>. Use this command to see if there are some
+uncommited changes.
+
+=head2 B<dotf> B<update>
+
+The B<update> subcommand is used to first update the F<.config> repository.
+Then, the F<~/.files/.config/modules.ini> file is used to find all required
+Git repositories. These repositories will either be cloned or updated, as
+needed.
+
+Repositories with uncommited changes are skipped.
+
+The update uses a I<--ff-only> update.
+
+=head2 B<dotf> B<version>
+
+Prints the version of dotf and exists.
+
+
+=head1 EXIT STATUS
+
+The dotf utility exits 0 on success, 1 if an error occurs, and 2 if
+invalid command line options were specified.
+
+
+=head1 EXAMPLES
+
+=head2 B<Example 1> Initializing B<dotf> on a new system or account
+
+  $ dotf init https://github.com/YOUR_ID/dotfiles-config-smartos.git
+
+This clones the mentioned repositors to F<~/.files/.config/>, parses the
+F<modules.ini> file in this repository and then clones all the repositories
+configured there.
+
+You will probably use different config repositories for different operating
+systems or e.g. for home and work systems.
+
+
+=head2 B<Example 2> Update your dotfiles
+
+  $ dotf update
+
+
+=head2 B<Example 3> Show uncommited changes in your dotfiles
+
+  $ dotf status
+
+B<dotf> replaces the managed dotfiles in your home directory with symlinks.
+The dotfiles are moved into the Git repositories under the F<~/.file/>
+directory. The B<status> subcommand can be used to get a C<git status -s> of
+all your repositories.
+
+=head2 B<Example 4> Commit changed files
+
+The dotfiles are managed with Git. B<dotf> does not interfere with this
+operation.
+
+  $ cd ~/.files/vim
+  $ git commit .vimrc
+  $ git push
+
+It is important to push your changes after commiting them to be able to use
+them on your other system/accounts.
+
+=head2 B<Example 5> Add a new file to be managed by B<dotf>
+
+This example shows how to start managing F<~/.vimrc> with B<dotf>. You
+either need a new repository are use an existing one. To create a new
+one please see L<modules.ini|modules.ini>.
+
+  $ cd ~/.files/vim/
+  $ mv ~/.vimrc ./
+  $ git add .vimrc
+  $ git commit -m 'initial commit of .vimrc' .vimrc
+  $ git push
+
+The file is now in the F<vim> Git repository. The last step is to create
+the F<~/.vimrc> symlink which will point to F<~/.files/vim/.vimrc>. This is
+done with:
+
+  $ dotf update
+
+
+=head1 ENVIRONMENT
+
+=over
+
+=item HOME
+
+On UNIX used by L<File::HomeDir|File::HomeDir> as primary method to identify your home
+directory.
+
+The home directory is where B<dotf> places the F<.files> directory which
+contains all the managed dotfiles.
+
+=back
+
+
+=head1 RATIONALE
+
+=head2 Why another dotfiles manager?
+
+=over
+
+=item Implemented in Perl, Ksh or Bash
+
+I don't want to compile or install an obscure compiler or vortual machine on
+every system I'd like to use my dotfiles manager. Perl is most likely
+available on everything I'm interested in.
+
+=item Support for multiple configuration repositories
+
+I'd like to have my Vim configuration readily available on github, but the
+F<.forward> or F<.profile> file from my workplace should only be available
+on the Git server at my workplace.
+
+=item The configuration which dotfiles are installed on which system should also be under version control
+
+And changes to this configuration should automatically show up with an
+B<update>. That's why we have the F<.config> repository with the L<modules.ini|modules.ini>
+file.
+
+=item I don't want the dotfiles manager to completely shield me from Git
+
+Git has a very powerful command line interface and you can find a huge amount
+of documentation on the Web. I don't want a dotfiles manager try to handle
+Git operations like merging, conflict resolution, etc. If there is a conflict
+to be resolved or a new file to be commited it should be done with Git
+directly. The dotfiles manager should only be a collection of convenient
+functions to make it easy to update changes on multiple system.
+
+=back
+
+I was unable to find an existing dotfile manager that fulfilled these four
+requirements.
+
+
+=head1 SEE ALSO
+
+L<modules.ini|modules.ini>
+
+
+=head1 AUTHOR
+
+Sven Kirmess <sven.kirmess@kzone.ch>
+
+=cut
