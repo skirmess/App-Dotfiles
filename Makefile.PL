@@ -2,7 +2,7 @@
 use strict;
 use warnings;
 
-
+use 5.006;
 
 use ExtUtils::MakeMaker;
 
@@ -17,8 +17,45 @@ my %WriteMakefileArgs = (
     "bin/dotf"
   ],
   "LICENSE" => "open_source",
+  "MIN_PERL_VERSION" => "5.006",
   "NAME" => "App::Dotfiles",
-  "PREREQ_PM" => {},
+  "PREREQ_PM" => {
+    "Config::Std" => 0,
+    "File::HomeDir" => 0,
+    "File::Spec" => 0,
+    "Getopt::Long" => 0,
+    "Git::Wrapper" => 0,
+    "Log::Any::Adapter" => 0,
+    "Log::Any::Adapter::Screen" => 0,
+    "Moo" => 0,
+    "Moo::Role" => 0,
+    "MooX::Role::Logger" => 0,
+    "Pod::Usage" => 0,
+    "Safe::Isa" => 0,
+    "Stow" => 0,
+    "Try::Tiny" => 0,
+    "custom::failures" => 0,
+    "namespace::clean" => 0,
+    "strict" => 0,
+    "warnings" => 0
+  },
+  "TEST_REQUIRES" => {
+    "Carp" => 0,
+    "English" => 0,
+    "File::Path" => 0,
+    "File::Spec" => 0,
+    "Git::Wrapper" => 0,
+    "Log::Any" => 0,
+    "Log::Any::Test" => 0,
+    "Test::Fatal" => 0,
+    "Test::More" => 0,
+    "Test::Script" => "1.09",
+    "Test::TempDir::Tiny" => 0,
+    "autodie" => 0,
+    "lib" => 0,
+    "strict" => 0,
+    "warnings" => 0
+  },
   "VERSION" => "0.001",
   "test" => {
     "TESTS" => "t/*.t"
@@ -26,7 +63,37 @@ my %WriteMakefileArgs = (
 );
 
 
-my %FallbackPrereqs = ();
+my %FallbackPrereqs = (
+  "Carp" => 0,
+  "Config::Std" => 0,
+  "English" => 0,
+  "File::HomeDir" => 0,
+  "File::Path" => 0,
+  "File::Spec" => 0,
+  "Getopt::Long" => 0,
+  "Git::Wrapper" => 0,
+  "Log::Any" => 0,
+  "Log::Any::Adapter" => 0,
+  "Log::Any::Adapter::Screen" => 0,
+  "Log::Any::Test" => 0,
+  "Moo" => 0,
+  "Moo::Role" => 0,
+  "MooX::Role::Logger" => 0,
+  "Pod::Usage" => 0,
+  "Safe::Isa" => 0,
+  "Stow" => 0,
+  "Test::Fatal" => 0,
+  "Test::More" => 0,
+  "Test::Script" => "1.09",
+  "Test::TempDir::Tiny" => 0,
+  "Try::Tiny" => 0,
+  "autodie" => 0,
+  "custom::failures" => 0,
+  "lib" => 0,
+  "namespace::clean" => 0,
+  "strict" => 0,
+  "warnings" => 0
+);
 
 
 unless ( eval { ExtUtils::MakeMaker->VERSION(6.63_03) } ) {
