@@ -84,7 +84,7 @@ sub run_status {
     for my $name ( sort keys %modules ) {
         my $module = $modules{$name};
 
-        if ( !$module->DOES('App::Dotfiles::Role::Repository') ) {
+        if ( !$module->$_DOES('App::Dotfiles::Role::Repository') ) {
             $self->_logger->error(" + $dotfiles_path/$name");
             next MODULE;
         }
