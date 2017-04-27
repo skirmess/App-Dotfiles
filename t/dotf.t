@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Test::More;
-use Test::Script;
+use Test::Script 1.09;
 use Test::TempDir::Tiny;
 
 main();
