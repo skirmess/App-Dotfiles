@@ -4,16 +4,12 @@ use strict;
 use warnings;
 use autodie;
 
-use Test::Fatal;
+use Test::Fatal qw(dies_ok exception);
 use Test::More;
 use Test::TempDir::Tiny;
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::CLI::Command;
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
 
 main();
 
@@ -36,7 +32,7 @@ sub main {
 
     isa_ok( $obj->runtime, 'App::Dotfiles::Runtime', q{attribute 'runtime'} );
     is( $obj->stow_verbose, 0, q{attribute 'stow_verbose'} );
-    like( exception { $obj->stow_verbose('abc') }, qr{stow_verbose is a read-only accessor}, '... is a read only accessor' );
+    dies_ok { $obj->stow_verbose('abc') } '... is a read-only accessor';
 
     #
     done_testing();

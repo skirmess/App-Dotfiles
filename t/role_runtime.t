@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use autodie;
 
-use Test::Fatal;
+use Test::Fatal qw(dies_ok exception);
 use Test::More;
 
 use lib 't/lib';
@@ -25,7 +25,7 @@ sub main {
     my $obj = new_ok( 'Chalna', [ runtime => 'x' ] );
 
     is( $obj->runtime, 'x', q{attribute 'runtime'} );
-    like( exception { $obj->runtime('abc') }, qr{runtime is a read-only accessor}, q{... is a read-only accessor} );
+    dies_ok { $obj->runtime('abc') } q{... is a read-only accessor};
 
     done_testing();
 

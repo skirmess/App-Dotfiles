@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use autodie;
 
-use Test::Fatal;
+use Test::Fatal qw(dies_ok exception);
 use Test::More;
 use Test::TempDir::Tiny;
 
@@ -81,7 +81,7 @@ sub main {
             $obj = new_ok( $class, [ runtime => $runtime, name => $name ] );
 
             is( $obj->_verify_remotes_before_update, 1, q{attribute '_verify_remotes_before_update'} );
-            like( exception { $obj->_verify_remotes_before_update('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+            dies_ok { $obj->_verify_remotes_before_update('abc') } '... is a read-only accessor';
 
             is( $obj2->_verify_remotes_before_update, 1, q{attribute '_verify_remotes_before_update'} );
             is( $obj3->_verify_remotes_before_update, 1, q{attribute '_verify_remotes_before_update'} );
@@ -93,14 +93,14 @@ sub main {
 
             $obj = new_ok( $class, [ runtime => $runtime, name => 'abc' ] );
             is( $obj->name, $name, q{'name' is ignored by new()} );
-            like( exception { $obj->name('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+            dies_ok { $obj->name('abc') } '... is a read-only accessor';
 
             is( $obj2->name, $name, q{'name' is ignored by new()} );
             is( $obj3->name, $name, q{'name' is ignored by new()} );
 
             $obj = new_ok( $class, [ runtime => $runtime ] );
             is( $obj->_verify_remotes_before_update, 0, q{attribute '_verify_remotes_before_update'} );
-            like( exception { $obj->_verify_remotes_before_update('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+            dies_ok { $obj->_verify_remotes_before_update('abc') } '... is a read-only accessor';
 
             is( $obj2->_verify_remotes_before_update, 0, q{attribute '_verify_remotes_before_update'} );
             is( $obj3->_verify_remotes_before_update, 0, q{attribute '_verify_remotes_before_update'} );
@@ -117,43 +117,43 @@ sub main {
         ok( $obj->does('App::Dotfiles::Role::Repository'), "$class does 'App::Dotfiles::Role::Repository'" );
 
         isa_ok( $obj->runtime, 'App::Dotfiles::Runtime' );
-        like( exception { $obj->runtime('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+        dies_ok { $obj->runtime('abc') } '... is a read-only accessor';
         isa_ok( $obj2->runtime, 'App::Dotfiles::Runtime' );
         isa_ok( $obj3->runtime, 'App::Dotfiles::Runtime' );
 
         is( $obj->runtime->home_path, $home, '->runtime->home_path is initialized correctly' );
-        like( exception { $obj->runtime->home_path('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+        dies_ok { $obj->runtime->home_path('abc') } '... is a read-only accessor';
         is( $obj2->runtime->home_path, $home2, '->runtime->home_path is initialized correctly' );
         is( $obj3->runtime->home_path, $home3, '->runtime->home_path is initialized correctly' );
 
         is( $obj->runtime->dotfiles_path, File::Spec->catfile( $home, '.files' ), '->runtime->dotfiles_path is initialized correctly' );
-        like( exception { $obj->runtime->dotfiles_path('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+        dies_ok { $obj->runtime->dotfiles_path('abc') } '... is a read-only accessor';
         is( $obj2->runtime->dotfiles_path, File::Spec->catfile( $home2, '.files' ), '->runtime->dotfiles_path is initialized correctly' );
         is( $obj3->runtime->dotfiles_path, $dotfiles_path3, '->runtime->dotfiles_path is initialized correctly' );
 
         is( $obj->name, $name, q{attribute 'name'} );
-        like( exception { $obj->name('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+        dies_ok { $obj->name('abc') } '... is a read-only accessor';
         is( $obj2->name, $name2, q{attribute 'name'} );
         is( $obj3->name, $name3, q{attribute 'name'} );
 
         is( $obj->module_path, File::Spec->catfile( $home, '.files', $name ), q{attribute 'module_path'} );
-        like( exception { $obj->module_path('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+        dies_ok { $obj->module_path('abc') } '... is a read-only accessor';
         is( $obj2->module_path, File::Spec->catfile( $home2, '.files', $name2 ), q{attribute 'module_path'} );
         is( $obj3->module_path, File::Spec->catfile( $dotfiles_path3, $name3 ), q{attribute 'module_path'} );
 
         is( $obj->pull_url, undef, q{attribute 'pull_url'} );
-        like( exception { $obj->pull_url('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+        dies_ok { $obj->pull_url('abc') } '... is a read-only accessor';
         is( $obj2->pull_url, 'http://example.net/TEST_PULL.git', q{attribute 'pull_url'} );
         is( $obj3->pull_url, 'http://example.net/TEST_PULL.git', q{attribute 'pull_url'} );
 
         is( $obj->push_url, undef, q{attribute 'push_url'} );
-        like( exception { $obj->push_url('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+        dies_ok { $obj->push_url('abc') } '... is a read-only accessor';
         is( $obj2->push_url, 'http://example.net/TEST_PUSH.git', q{attribute 'push_url'} );
         is( $obj3->push_url, 'http://example.net/TEST_PUSH.git', q{attribute 'push_url'} );
 
         # git
         isa_ok( $obj->git, 'Git::Wrapper', q{attribute 'git'} );
-        like( exception { $obj->git('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+        dies_ok { $obj->git('abc') } '... is a read-only accessor';
         isa_ok( $obj2->git, 'Git::Wrapper', q{attribute 'git'} );
         isa_ok( $obj3->git, 'Git::Wrapper', q{attribute 'git'} );
     }

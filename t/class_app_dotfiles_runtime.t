@@ -4,7 +4,7 @@ use strict;
 use warnings;
 use autodie;
 
-use Test::Fatal;
+use Test::Fatal qw(dies_ok exception);
 use Test::More;
 use Test::TempDir::Tiny;
 
@@ -37,16 +37,16 @@ sub main {
     my $obj = new_ok( $class, [ home_path => $home ] );
 
     is( $obj->home_path, $home, q{attribute 'home_path'} );
-    like( exception { $obj->home_path('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+    dies_ok { $obj->home_path('abc') } '... is a read-only accessor';
 
     is( $obj->config_dir, '.config', q{attribute 'config_dir'} );
-    like( exception { $obj->config_dir('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+    dies_ok { $obj->config_dir('abc') } '... is a read-only accessor';
 
     is( $obj->dotfiles_path, $dotfiles_path, q{attribute 'dotfiles_path'} );
-    like( exception { $obj->dotfiles_path('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+    dies_ok { $obj->dotfiles_path('abc') } '... is a read-only accessor';
 
     is( $obj->modules_config_file, 'modules.ini', q{attribute 'dotfiles_path'} );
-    like( exception { $obj->modules_config_file('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+    dies_ok { $obj->modules_config_file('abc') } '... is a read-only accessor';
 
     #
     note('non-defaults');
@@ -56,16 +56,16 @@ sub main {
     $obj = new_ok( $class, [ home_path => $home, config_dir => $config_dir, dotfiles_path => $dotfiles_path, modules_config_file => 'CONFIG_FILE' ] );
 
     is( $obj->home_path, $home, q{attribute 'home_path'} );
-    like( exception { $obj->home_path('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+    dies_ok { $obj->home_path('abc') } '... is a read-only accessor';
 
     is( $obj->config_dir, $config_dir, q{attribute 'config_dir'} );
-    like( exception { $obj->config_dir('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+    dies_ok { $obj->config_dir('abc') } '... is a read-only accessor';
 
     is( $obj->dotfiles_path, $dotfiles_path, q{attribute 'dotfiles_path'} );
-    like( exception { $obj->dotfiles_path('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+    dies_ok { $obj->dotfiles_path('abc') } '... is a read-only accessor';
 
     is( $obj->modules_config_file, 'CONFIG_FILE', q{attribute 'dotfiles_path'} );
-    like( exception { $obj->modules_config_file('abc') }, qr{is a read-only accessor}, '... is a read-only accessor' );
+    dies_ok { $obj->modules_config_file('abc') } '... is a read-only accessor';
 
     #
     $log->empty_ok('nothing was logged');
