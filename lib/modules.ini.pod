@@ -7,7 +7,6 @@ B<modules.ini>
 The B<modules.ini> file describes the dotfiles modules that should be
 installed and stowed to your home directory.
 
-
 =head1 EXAMPLES
 
 =head2 B<Example 1> Use a github and a gitlab repository
@@ -24,7 +23,6 @@ for pulling and pusing.
   [forward]
   pull=git@gitlab.com:YOUR_ID/dotfiles-forward.git
 
-
 =head1 SEE ALSO
 
 L<dotf|dotf>
@@ -34,4 +32,3 @@ L<dotf|dotf>
 Sven Kirmess <sven.kirmess@kzone.ch>
 
 =cut
-

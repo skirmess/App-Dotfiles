@@ -67,7 +67,6 @@ __END__
 
 dotf - dotfiles manager
 
-
 =head1 SYNOPSIS
 
 =over
@@ -99,7 +98,6 @@ to the Git repository and the symlink will be recreated. Normally this
 should not be used but if one of your tools replaces the symlink, it will
 be automatically recreated.
 
-
 =head1 OPTIONS
 
 =over
@@ -112,7 +110,6 @@ is the directory in which the dotfiles will be managed.
 If not specified, B<dotf> defaults to your home directory as returned by L<File::HomeDir|File::HomeDir>.
 
 =back
-
 
 =head1 SUBCOMMANDS
 
@@ -150,12 +147,10 @@ The update uses a I<--ff-only> update.
 
 Prints the version of dotf and exists.
 
-
 =head1 EXIT STATUS
 
 The dotf utility exits 0 on success, 1 if an error occurs, and 2 if
 invalid command line options were specified.
-
 
 =head1 EXAMPLES
 
@@ -170,11 +165,9 @@ configured there.
 You will probably use different config repositories for different operating
 systems or e.g. for home and work systems.
 
-
 =head2 B<Example 2> Update your dotfiles
 
   $ dotf update
-
 
 =head2 B<Example 3> Show uncommited changes in your dotfiles
 
@@ -215,7 +208,6 @@ done with:
 
   $ dotf update
 
-
 =head1 ENVIRONMENT
 
 =over
@@ -229,7 +221,6 @@ The home directory is where B<dotf> places the F<.files> directory which
 contains all the managed dotfiles.
 
 =back
-
 
 =head1 RATIONALE
 
@@ -269,11 +260,9 @@ functions to make it easy to update changes on multiple system.
 I was unable to find an existing dotfile manager that fulfilled these four
 requirements.
 
-
 =head1 SEE ALSO
 
 L<modules.ini|modules.ini>
-
 
 =head1 AUTHOR
 
