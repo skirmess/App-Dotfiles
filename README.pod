@@ -174,8 +174,8 @@ available on everything I'm interested in.
 =item Support for multiple configuration repositories
 
 I'd like to have my Vim configuration readily available on github, but the
-F<.forward> or F<.profile> file from my workplace should only be available
-on the Git server at my workplace.
+F<.profile> file from my workplace should only be available on the Git server
+at my workplace.
 
 =item The configuration which dotfiles are installed on which system should also be under version control
 

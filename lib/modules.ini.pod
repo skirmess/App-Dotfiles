@@ -11,17 +11,17 @@ installed and stowed to your home directory.
 
 =head2 B<Example 1> Use a github and a gitlab repository
 
-In this example we use a public github repository for your Vim configuration
-and a private gitlab repository for your .forward file. The vim repository
-uses a different pull and push url, the forward repository uses the same url
+In this example we use a public github repository for our Vim configuration
+and a private gitlab repository for our .profile file. The vim repository
+uses a different pull and push url, the profile repository uses the same url
 for pulling and pusing.
 
   [vim]
   pull=https://github.com/YOUR_ID/dotfiles-vim.git
   push=git@github.com:YOUR_ID/dotfiles-vim.git
 
-  [forward]
-  pull=git@gitlab.com:YOUR_ID/dotfiles-forward.git
+  [profile]
+  pull=git@gitlab.com:YOUR_ID/dotfiles-profile.git
 
 =head1 SEE ALSO
 
