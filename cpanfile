@@ -22,8 +22,6 @@ on 'test' => sub {
   requires "Carp" => "0";
   requires "English" => "0";
   requires "File::Path" => "0";
-  requires "File::Spec" => "0";
-  requires "Git::Wrapper" => "0";
   requires "Log::Any" => "0";
   requires "Log::Any::Test" => "0";
   requires "Test::Fatal" => "0";
@@ -32,9 +30,6 @@ on 'test' => sub {
   requires "Test::TempDir::Tiny" => "0";
   requires "autodie" => "0";
   requires "lib" => "0";
-  requires "perl" => "5.006";
-  requires "strict" => "0";
-  requires "warnings" => "0";
 };
 
 on 'configure' => sub {
@@ -42,12 +37,9 @@ on 'configure' => sub {
 };
 
 on 'develop' => sub {
-  requires "File::Spec" => "0";
   requires "Test::Kwalitee" => "0";
   requires "Test::MinimumVersion" => "0";
   requires "Test::More" => "0";
   requires "Test::Perl::Critic" => "0";
   requires "autodie" => "0";
-  requires "strict" => "0";
-  requires "warnings" => "0";
 };
