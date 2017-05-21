@@ -16,12 +16,12 @@ has name => (
     required => 1,
 );
 
-has source_shift => (
+has source_path_prefix => (
     is      => 'ro',
     default => sub { path(q{.}) },
 );
 
-has target_shift => (
+has target_path_prefix => (
     is      => 'ro',
     default => sub { path(q{.}) },
 );
@@ -41,10 +41,10 @@ sub get_linkables {
     my ($path) = @_;
 
     $path = path($path);
-    my $module_path  = $self->module_path;
-    my $source_shift = $self->source_shift;
+    my $module_path        = $self->module_path;
+    my $source_path_prefix = $self->source_path_prefix;
 
-    my $path_to_process = path($module_path)->child( $source_shift, $path );
+    my $path_to_process = path($module_path)->child( $source_path_prefix, $path );
 
     App::Dotfiles::Error->throw("Not a directory: $path_to_process") if -l $path_to_process || !-d $path_to_process;
 

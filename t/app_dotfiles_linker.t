@@ -27,7 +27,7 @@ sub main {
     my $home = path( tempdir() );
 
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
-    my $mod1 = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod1', target_shift => 'mod1T' ] );
+    my $mod1 = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod1', target_path_prefix => 'mod1T' ] );
 
     my $mod1_path = path( $mod1->module_path );
     $mod1_path->mkpath;
@@ -162,8 +162,8 @@ sub main {
     like( exception { $linker->_create_actions() }, qr{internal error: '_dirs' and '_links' both contain a 'test' at}, 'internal error throws' );
 
     #
-    note('multi directory target_shift');
-    $mod1 = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod1', target_shift => path('mod1Ta/MOD 1 T')->stringify() ] );
+    note('multi directory target_path_prefix');
+    $mod1 = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod1', target_path_prefix => path('mod1Ta/MOD 1 T')->stringify() ] );
 
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
 
@@ -220,8 +220,8 @@ sub main {
     my @mod;
     $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod0A' ] );
     $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod1A' ] );
-    $mod[2] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod2A', source_shift => 'abc' ] );
-    $mod[3] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod3A', source_shift => path('abc/xyz') ] );
+    $mod[2] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod2A', source_path_prefix => 'abc' ] );
+    $mod[3] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod3A', source_path_prefix => path('abc/xyz') ] );
 
     my @mod_path;
     for my $i ( 0 .. 3 ) {
@@ -297,14 +297,14 @@ sub main {
     is( $action[2]->name, 'mod1A', '... correct module' );
 
     #
-    note('multiple modules with target_shift');
+    note('multiple modules with target_path_prefix');
     $home = path( tempdir() );
 
     $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     @mod = ();
-    $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module1', target_shift => path('target/T') ] );
-    $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module2', target_shift => path('target/T') ] );
+    $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module1', target_path_prefix => path('target/T') ] );
+    $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module2', target_path_prefix => path('target/T') ] );
 
     @mod_path = ();
     for my $i ( 0 .. 1 ) {
@@ -337,8 +337,8 @@ sub main {
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
 
     @mod = ();
-    $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module1', target_shift => path('target/T') ] );
-    $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module2', target_shift => path('target/T') ] );
+    $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module1', target_path_prefix => path('target/T') ] );
+    $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module2', target_path_prefix => path('target/T') ] );
 
     @mod_path = ();
     for my $i ( 0 .. 1 ) {
@@ -445,7 +445,7 @@ sub main {
 
     @mod = ();
     $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'vim' ] );
-    $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'vim-plugin', target_shift => path('.vim/bundle/vim-plugin') ] );
+    $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'vim-plugin', target_path_prefix => path('.vim/bundle/vim-plugin') ] );
 
     @mod_path = ();
     for my $i ( 0 .. 1 ) {

@@ -51,15 +51,15 @@ sub get_modules {
 
         my $pull_url;
         my $push_url;
-        my $source_shift;
-        my $target_shift;
+        my $source_path_prefix;
+        my $target_path_prefix;
 
       ENTRY:
         for my $key ( keys %{ $config{$section} } ) {
             my $value = $config{$section}->{$key};
 
             if ( $key eq 'pull' ) {
-                App::Dotfiles::Error->throw("Pull url defined multiple times in section '[$section]'")
+                App::Dotfiles::Error->throw("'pull' url defined multiple times in section '[$section]'")
                   if defined $pull_url
                   or ref $value eq $array_ref;
 
@@ -68,7 +68,7 @@ sub get_modules {
             }
 
             if ( $key eq 'push' ) {
-                App::Dotfiles::Error->throw("Push url defined multiple times in section '[$section]'")
+                App::Dotfiles::Error->throw("'push' url defined multiple times in section '[$section]'")
                   if defined $push_url
                   or ref $value eq $array_ref;
 
@@ -76,21 +76,21 @@ sub get_modules {
                 next ENTRY;
             }
 
-            if ( $key eq 'source_shift' ) {
-                App::Dotfiles::Error->throw("source_shift url defined multiple times in section '[$section]'")
-                  if defined $source_shift
+            if ( $key eq 'source path prefix' ) {
+                App::Dotfiles::Error->throw("'source path prefix' defined multiple times in section '[$section]'")
+                  if defined $source_path_prefix
                   or ref $value eq $array_ref;
 
-                $source_shift = $value;
+                $source_path_prefix = $value;
                 next ENTRY;
             }
 
-            if ( $key eq 'target_shift' ) {
-                App::Dotfiles::Error->throw("target_shift url defined multiple times in section '[$section]'")
-                  if defined $target_shift
+            if ( $key eq 'target path prefix' ) {
+                App::Dotfiles::Error->throw("'target path prefix' defined multiple times in section '[$section]'")
+                  if defined $target_path_prefix
                   or ref $value eq $array_ref;
 
-                $target_shift = $value;
+                $target_path_prefix = $value;
                 next ENTRY;
             }
 
@@ -113,12 +113,12 @@ sub get_modules {
             $module_args_ref->{push_url} = $push_url;
         }
 
-        if ( defined $source_shift ) {
-            $module_args_ref->{source_shift} = path($source_shift);
+        if ( defined $source_path_prefix ) {
+            $module_args_ref->{source_path_prefix} = path($source_path_prefix);
         }
 
-        if ( defined $target_shift ) {
-            $module_args_ref->{target_shift} = path($target_shift);
+        if ( defined $target_path_prefix ) {
+            $module_args_ref->{target_path_prefix} = path($target_path_prefix);
         }
 
         push @modules, App::Dotfiles::Module->new($module_args_ref);

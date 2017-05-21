@@ -18,14 +18,14 @@ The URL used by git to clone the repository.
 If the push URL is defined it will be configured in the git repository as
 push URL.
 
-=head2 B<source_shift>
+=head2 B<source path prefix>
 
 Instead of linking the full module to the home directory, only files in the
-B<source_shift> directory and its subdirectories are linked.
+B<source path prefix> directory and its subdirectories are linked.
 
-=head2 B<target_shift>
+=head2 B<target path prefix>
 
-The B<target_shift> path is prepended to every file when it is linked to the
+The B<target path prefix> path is prepended to every file when it is linked to the
 home directory. This allows us to install modules to subdirectories of the
 home directory without replicating the structure in the module which is
 useful if you're using someone elses repository where you have no influence
@@ -44,15 +44,15 @@ hosted on github, and link it in the .vim/bundle/vim-airline subdirectory of
 the home directory
 
   [vim]
-  pull=https://github.com/YOUR_ID/dotfiles-vim.git
-  push=git@github.com:YOUR_ID/dotfiles-vim.git
+  pull = https://github.com/YOUR_ID/dotfiles-vim.git
+  push = git@github.com:YOUR_ID/dotfiles-vim.git
 
   [vim-airline]
   pull = https://github.com/vim-airline/vim-airline.git
-  target_shift = .vim/bundle/vim-airline
+  target path prefix = .vim/bundle/vim-airline
 
   [profile]
-  pull=git@gitlab.com:YOUR_ID/dotfiles-profile.git
+  pull = git@gitlab.com:YOUR_ID/dotfiles-profile.git
 
 =head1 SEE ALSO
 

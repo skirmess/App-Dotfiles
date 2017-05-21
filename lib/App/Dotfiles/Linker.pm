@@ -34,18 +34,18 @@ sub plan_module {
     my $self = shift;
     my ($module) = @_;
 
-    my $target_shift = path( $module->target_shift );
+    my $target_path_prefix = path( $module->target_path_prefix );
 
-    if ( $target_shift eq q{.} ) {
+    if ( $target_path_prefix eq q{.} ) {
 
         # Module will be linked into the root of the home directory
         $self->_plan_directory_content( $module, q{.} );
         return;
     }
 
-    # Module will be linked into the sub directory $target_shift of the
+    # Module will be linked into the sub directory $target_path_prefix of the
     # home directory
-    my $dir = $target_shift;
+    my $dir = $target_path_prefix;
     while ( ( $dir = $dir->parent() ) ne q{.} ) {
         $self->_plan_directory_ignore_shift( $module, $dir );
     }
@@ -274,7 +274,7 @@ sub _plan_directory {
     my $self = shift;
     my ( $module, $path ) = @_;
 
-    my $new_path = path( $module->target_shift )->child($path);
+    my $new_path = path( $module->target_path_prefix )->child($path);
 
     $self->_plan_directory_ignore_shift( $module, $new_path );
     return;
@@ -320,7 +320,7 @@ sub _plan_link {
     my $dirs  = $self->_dirs;
     my $links = $self->_links;
 
-    my $new_path = path( $module->target_shift, $path );
+    my $new_path = path( $module->target_path_prefix, $path );
 
     if ( exists $dirs->{$new_path} ) {
         $self->_plan_directory_content( $module, $path );
