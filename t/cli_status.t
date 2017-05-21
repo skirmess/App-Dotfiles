@@ -34,10 +34,7 @@ sub _print {
 }
 
 sub main {
-
-    # untaint
-    my ($home) = tempdir() =~ m{ (.*) }xsm;
-    local ( $ENV{PATH} ) = $ENV{PATH} =~ m{ (.*) }xsm;
+    my $home = tempdir();
 
     my $runtime = new_ok( 'App::Dotfiles::Runtime',      [ home_path => $home ] );
     my $obj     = new_ok( 'App::Dotfiles::CLI::Command', [ runtime   => $runtime ] );

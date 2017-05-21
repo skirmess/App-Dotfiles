@@ -19,9 +19,7 @@ use App::Dotfiles::Runtime;
 main();
 
 sub main {
-
-    # untaint;
-    my ($home) = File::Spec->catfile( tempdir(), 'does_not_exit' ) =~ m{ (.*) }xsm;
+    my $home = File::Spec->catfile( tempdir(), 'does_not_exit' );
 
     note('home_path is undef');
     like( exception { App::Dotfiles::Runtime->new( home_path => undef ) }, qr{Home directory is not specified}, 'new() throws an exception if the home directory is not specified' );

@@ -63,7 +63,7 @@ sub main {
 
     #
     note('~/.files/.config exists and is a Git repository with a valid remote');
-    my ($repositories) = tempdir() =~ m{ (.*) }xsm;
+    my $repositories = tempdir();
     my $remote_config = File::Spec->catfile( $repositories, 'config.git' );
     make_path($remote_config);
 

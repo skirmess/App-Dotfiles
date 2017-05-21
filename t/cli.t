@@ -21,9 +21,7 @@ use App::Dotfiles::CLI;
 my $env_home;
 
 BEGIN {
-
-    # untaint
-    ( $ENV{HOME} ) = ($env_home) = tempdir() =~ m{ (.*) }xsm;
+    $ENV{HOME} = $env_home = tempdir();
 }
 
 use English qw(-no_match_vars);
@@ -43,10 +41,7 @@ sub _note_ARGV {
 }
 
 sub main {
-
-    # untaint
-    local ( $ENV{PATH} ) = $ENV{PATH} =~ m{ (.*) }xsm;
-    my ($home) = tempdir() =~ m{ (.*) }xsm;
+    my $home = tempdir();
 
     ok( $home ne $env_home, '$home ne $env_home' );
 
@@ -308,8 +303,8 @@ sub main {
         $log->empty_ok();
     }
 
-    my ($config_repo_path) = tempdir() =~ m{ (.*) }xms;
-    my $config_repo = Git::Wrapper->new($config_repo_path);
+    my $config_repo_path = tempdir();
+    my $config_repo      = Git::Wrapper->new($config_repo_path);
     $config_repo->init('-q');
 
     open my $fh, '>', File::Spec->catfile( $config_repo_path, 'modules.ini' );

@@ -33,9 +33,7 @@ sub main {
     {
         note("### class = $class");
 
-        # untaint
-        my ($home) = tempdir() =~ m{ (.*) }xms;
-        local ( $ENV{PATH} ) = $ENV{PATH} =~ m{ (.*) }xms;
+        my $home = tempdir();
 
         my $obj;
         my $name = 'test';
@@ -93,8 +91,8 @@ sub main {
         }
 
         #
-        my ($repositories) = tempdir() =~ m{ (.*) }xms;
-        my ($workspaces)   = tempdir() =~ m{ (.*) }xsm;
+        my $repositories = tempdir();
+        my $workspaces   = tempdir();
 
         # Create remote (bare) repository
         my $test_repo = File::Spec->catfile( $repositories, 'test.git' );
@@ -118,7 +116,7 @@ sub main {
         $git->push( '-q', '--set-upstream', 'origin', 'master' );
 
         # clone_repository
-        ($home) = tempdir() =~ m{ (.*) }xms;
+        $home = tempdir();
         $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
         $obj = new_ok( $class, [ name => $name, runtime => $runtime ] );
@@ -145,9 +143,9 @@ sub main {
         ok( -d File::Spec->catfile( $home, '.files', $name ), q{repository 'name' exists after cloning it} );
 
         #
-        ($home) = tempdir() =~ m{ (.*) }xms;
-        $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
-        $r_path = File::Spec->catfile( $home, '.files', $name );
+        $home      = tempdir();
+        $runtime   = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
+        $r_path    = File::Spec->catfile( $home, '.files', $name );
         $r_path_qm = quotemeta $r_path;
 
         $obj = new_ok( $class, [ name => $name, runtime => $runtime, pull_url => $upstream_repo, push_url => 'http://example.net/test.git' ] );

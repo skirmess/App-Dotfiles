@@ -32,10 +32,7 @@ sub _print {
 }
 
 sub main {
-
-    # untaint
-    my ($home) = tempdir() =~ m{ (.*) }xms;
-    local ( $ENV{PATH} ) = $ENV{PATH} =~ m{ (.*) }xms;
+    my $home = tempdir();
 
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
