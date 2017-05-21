@@ -7,6 +7,31 @@ B<modules.ini>
 The B<modules.ini> file describes the dotfiles modules that should be
 installed and stowed to your home directory.
 
+The following configuration options are available:
+
+=head2 B<pull>
+
+The URL used by git to clone the repository.
+
+=head2 B<push>
+
+If the push URL is defined it will be configured in the git repository as
+push URL.
+
+=head2 B<source_shift>
+
+Instead of linking the full module to the home directory, only files in the
+B<source_shift> directory and its subdirectories are linked.
+
+=head2 B<target_shift>
+
+The B<target_shift> path is prepended to every file when it is linked to the
+home directory. This allows us to install modules to subdirectories of the
+home directory without replicating the structure in the module which is
+useful if you're using someone elses repository where you have no influence
+on how the files are stored. See L<Example 1> below for an example using
+F<vim-airline>.
+
 =head1 EXAMPLES
 
 =head2 B<Example 1> Use a github and a gitlab repository
@@ -14,11 +39,17 @@ installed and stowed to your home directory.
 In this example we use a public github repository for our Vim configuration
 and a private gitlab repository for our .profile file. The vim repository
 uses a different pull and push url, the profile repository uses the same url
-for pulling and pusing.
+for pulling and pusing. Then we add the vim-airline repository, which is
+hosted on github, and link it in the .vim/bundle/vim-airline subdirectory of
+the home directory
 
   [vim]
   pull=https://github.com/YOUR_ID/dotfiles-vim.git
   push=git@github.com:YOUR_ID/dotfiles-vim.git
+
+  [vim-airline]
+  pull = https://github.com/vim-airline/vim-airline.git
+  target_shift = .vim/bundle/vim-airline
 
   [profile]
   pull=git@gitlab.com:YOUR_ID/dotfiles-profile.git

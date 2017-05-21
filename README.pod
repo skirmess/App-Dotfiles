@@ -25,15 +25,12 @@ dotf - dotfiles manager
 The dotfiles manager B<dotf> helps you synchronize your precious dotfiles
 between multiple Unix systems.
 
-Your dotfiles will be maintained in one or multiple git repositories. Then
-L<GNU Stow|Stow> is used to create symlinks from the dotfiles to your home
-directory.
+Your dotfiles will be maintained in one or multiple git repositories. These
+files are then linked with symlinks to your home directory.
 
-L<GNU Stow|Stow> is used with the B<--adopt> option, which means that if
-someone or something replaces a symlink with a file, the file will be moved
-to the Git repository and the symlink will be recreated. Normally this
-should not be used but if one of your tools replaces the symlink, it will
-be automatically recreated.
+If someone or something removes the symlink and replaces it with a copy of
+the file, the next run of B<dotf update> will move the file back into the
+repository and recreate the symlink.
 
 =head1 OPTIONS
 
@@ -167,7 +164,7 @@ contains all the managed dotfiles.
 
 =item Implemented in Perl, Ksh or Bash
 
-I don't want to compile or install an obscure compiler or vortual machine on
+I don't want to compile or install an obscure compiler or virtual machine on
 every system I'd like to use my dotfiles manager. Perl is most likely
 available on everything I'm interested in.
 

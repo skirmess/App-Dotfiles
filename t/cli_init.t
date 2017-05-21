@@ -161,8 +161,6 @@ EOF
     $repo_path = File::Spec->catfile( $home, '.files', 'module 2' );
     $log->contains_ok("Cloning repository '$repo2' into '$repo_path'");
 
-    $log->contains_ok(q{Planning 'stow' actions});
-    $log->contains_ok(q{Stowing modules module 2 module1});
     $log->contains_ok(q{Dotfiles updated successfully});
     $log->empty_ok('... no more logs');
 

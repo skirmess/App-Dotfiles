@@ -16,6 +16,8 @@ exclude_functions = print
 
 [-RegularExpressions::ProhibitComplexRegexes]
 
+[-Subroutines::ProhibitExcessComplexity]
+
 [Variables::ProhibitPunctuationVars]
 allow = $! $/ $0
 

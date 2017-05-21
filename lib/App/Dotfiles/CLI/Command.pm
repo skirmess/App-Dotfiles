@@ -8,20 +8,15 @@ our $VERSION = '0.001';
 
 use Pod::Usage;
 use Safe::Isa;
-use Stow;
 use Try::Tiny;
 
 use App::Dotfiles::Error;
+use App::Dotfiles::Linker;
 use App::Dotfiles::Module::Config;
 
 use Moo;
 with 'MooX::Role::Logger', 'App::Dotfiles::Role::Runtime';
 use namespace::clean;
-
-has stow_verbose => (
-    is      => 'ro',
-    default => 1,
-);
 
 sub run_help {
     my $self = shift;
@@ -130,56 +125,6 @@ sub run_update {
     return $self->_update_modules();
 }
 
-sub _stow {
-    my $self = shift;
-    my (@packages) = @_;
-
-    if ( @packages == 0 ) {
-        $self->_logger->info('There are no packages to stow');
-        return;
-    }
-
-    my $runtime       = $self->runtime;
-    my $home          = $runtime->home_path;
-    my $dotfiles_path = $runtime->dotfiles_path;
-    my $verbose       = $self->stow_verbose ? 1 : 0;
-
-    $self->_logger->info(q{Planning 'stow' actions});
-
-    my %stow_options = (
-        target  => $home,
-        dir     => $dotfiles_path,
-        verbose => $verbose,
-        adopt   => 1,
-    );
-
-    my $stow = Stow->new(%stow_options);
-    $stow->plan_stow(@packages);
-
-    my %conflicts = $stow->get_conflicts;
-
-    if (%conflicts) {
-      ACTION:
-        foreach my $action ( 'unstow', 'stow' ) {
-            next ACTION if !$conflicts{$action};
-
-            foreach my $package ( sort keys %{ $conflicts{$action} } ) {
-                $self->_logger->error("${action}ing '$package' would cause conflicts:");
-                foreach my $message ( sort @{ $conflicts{$action}{$package} } ) {
-                    $self->_logger->error("  * $message");
-                }
-            }
-        }
-
-        App::Dotfiles::Error->throw('All stow operations aborted');
-    }
-
-    $self->_logger->info( 'Stowing modules ' . join q{ }, @packages );
-    $stow->process_tasks();
-
-    return;
-}
-
 sub _update_modules {
     my $self = shift;
 
@@ -194,7 +139,8 @@ sub _update_modules {
         return;
     }
 
-    my @modules_to_stow;
+    my $linker = App::Dotfiles::Linker->new( runtime => $runtime );
+
     for my $module (@modules) {
         try {
             my $module_name = $module->name();
@@ -213,14 +159,14 @@ sub _update_modules {
                 $module->clone_repository();
             }
 
-            push @modules_to_stow, $module_name;
+            $linker->plan_module($module);
         }
         catch {
             $self->_logger->error($_);
         };
     }
 
-    $self->_stow(@modules_to_stow);
+    $linker->run();
 
     $self->_logger->info('Dotfiles updated successfully');
 

@@ -24,15 +24,6 @@ sub main {
     my $obj = new_ok( $class, [ runtime => $runtime ] );
 
     isa_ok( $obj->runtime, 'App::Dotfiles::Runtime', q{attribute 'runtime'} );
-    is( $obj->stow_verbose, 1, q{attribute 'stow_verbose'} );
-
-    #
-    note('non-defaults');
-    $obj = new_ok( $class, [ runtime => $runtime, stow_verbose => 0 ] );
-
-    isa_ok( $obj->runtime, 'App::Dotfiles::Runtime', q{attribute 'runtime'} );
-    is( $obj->stow_verbose, 0, q{attribute 'stow_verbose'} );
-    dies_ok { $obj->stow_verbose('abc') } '... is a read-only accessor';
 
     #
     done_testing();

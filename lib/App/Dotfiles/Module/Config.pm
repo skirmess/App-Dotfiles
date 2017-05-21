@@ -28,6 +28,8 @@ has modules_config_file_path => (
     init_arg => undef,
 );
 
+use Path::Tiny;
+
 use namespace::clean;
 
 sub get_modules {
@@ -49,6 +51,8 @@ sub get_modules {
 
         my $pull_url;
         my $push_url;
+        my $source_shift;
+        my $target_shift;
 
       ENTRY:
         for my $key ( keys %{ $config{$section} } ) {
@@ -72,6 +76,24 @@ sub get_modules {
                 next ENTRY;
             }
 
+            if ( $key eq 'source_shift' ) {
+                App::Dotfiles::Error->throw("source_shift url defined multiple times in section '[$section]'")
+                  if defined $source_shift
+                  or ref $value eq $array_ref;
+
+                $source_shift = $value;
+                next ENTRY;
+            }
+
+            if ( $key eq 'target_shift' ) {
+                App::Dotfiles::Error->throw("target_shift url defined multiple times in section '[$section]'")
+                  if defined $target_shift
+                  or ref $value eq $array_ref;
+
+                $target_shift = $value;
+                next ENTRY;
+            }
+
             App::Dotfiles::Error->throw("Invalid entry '$key=$value' in section '[$section]'")
               if ref $value eq q{};
 
@@ -89,6 +111,14 @@ sub get_modules {
 
         if ( defined $push_url ) {
             $module_args_ref->{push_url} = $push_url;
+        }
+
+        if ( defined $source_shift ) {
+            $module_args_ref->{source_shift} = path($source_shift);
+        }
+
+        if ( defined $target_shift ) {
+            $module_args_ref->{target_shift} = path($target_shift);
         }
 
         push @modules, App::Dotfiles::Module->new($module_args_ref);

@@ -10,6 +10,7 @@ my @modules = (
     'App::Dotfiles::CLI',
     'App::Dotfiles::CLI::Command',
     'App::Dotfiles::Error',
+    'App::Dotfiles::Linker',
     'App::Dotfiles::Module',
     'App::Dotfiles::Module::Config',
     'App::Dotfiles::Role::Repository',

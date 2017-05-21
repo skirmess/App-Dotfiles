@@ -7,6 +7,7 @@ use Carp;
 
 use File::Path qw(make_path);
 use File::Spec;
+use Path::Tiny;
 
 use Test::Fatal;
 use Test::More;
@@ -15,9 +16,11 @@ use Test::TempDir::Tiny;
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Module::Config;
 
+## no critic (InputOutput::RequireBriefOpen)
 ## no critic (RegularExpressions::RequireDotMatchAnything)
 ## no critic (RegularExpressions::RequireExtendedFormatting)
 ## no critic (RegularExpressions::RequireLineBoundaryMatching)
+## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
 
 main();
 
@@ -90,7 +93,7 @@ sub main {
     _print( $fh, "invalid\n" );
     close $fh;
 
-    # error throws is from Config::Std
+    # error thrown is from Config::Std
     like( exception { $obj->get_modules() }, qr{Error in config file}, '... throws an exception if there is an error in the config file' );
 
     #
@@ -141,7 +144,8 @@ sub main {
     isa_ok( $modules[0], 'App::Dotfiles::Module' );
     is( $modules[0]->name, 'test', '... has the correct name' );
 
-    # two modules
+    #
+    note('two module');
     open $fh, '>', "$modules_file";
     _print( $fh, "[test]\n" );
     _print( $fh, "pull=http://example.net/test.git\n" );
@@ -153,12 +157,72 @@ sub main {
     is( @modules, 2, '... returns a list of two object' );
     isa_ok( $modules[0], 'App::Dotfiles::Module' );
     isa_ok( $modules[1], 'App::Dotfiles::Module' );
-    is( $modules[0]->name,     'test',                         '... the first has the correct name' );
-    is( $modules[1]->name,     'test2',                        '... the second has the correct name' );
-    is( $modules[0]->pull_url, 'http://example.net/test.git',  '... the first has the correct pull url' );
-    is( $modules[0]->push_url, undef,                          '... undef push url' );
-    is( $modules[1]->pull_url, 'http://example.net/test2.git', '... the second has the correct pull url' );
-    is( $modules[1]->push_url, undef,                          '... undef push url' );
+    is( $modules[0]->name,         'test',                         '... the first has the correct name' );
+    is( $modules[1]->name,         'test2',                        '... the second has the correct name' );
+    is( $modules[0]->pull_url,     'http://example.net/test.git',  '... the first has the correct pull url' );
+    is( $modules[0]->push_url,     undef,                          '... undef push url' );
+    is( $modules[1]->pull_url,     'http://example.net/test2.git', '... the second has the correct pull url' );
+    is( $modules[1]->push_url,     undef,                          '... undef push url' );
+    is( $modules[0]->source_shift, q{.},                           '... the first has the correct default source_shift' );
+    isa_ok( $modules[0]->source_shift, 'Path::Tiny' );
+    is( $modules[0]->target_shift, q{.}, '... default target_shift' );
+    isa_ok( $modules[0]->target_shift, 'Path::Tiny' );
+    is( $modules[1]->source_shift, q{.}, '... the second has the correct default source_shift' );
+    isa_ok( $modules[1]->source_shift, 'Path::Tiny' );
+    is( $modules[1]->target_shift, q{.}, '... default target_shift' );
+    isa_ok( $modules[1]->target_shift, 'Path::Tiny' );
+
+    #
+    note('four modules with source_shift/target_shift');
+    open $fh, '>', "$modules_file";
+    _print( $fh, "[test1]\n" );
+    _print( $fh, "pull=http://example.net/test1.git\n" );
+    _print( $fh, "[test2]\n" );
+    _print( $fh, "pull=http://example.net/test2.git\n" );
+    _print( $fh, "source_shift=a/b c/d\n" );
+    _print( $fh, "[test3]\n" );
+    _print( $fh, "pull=http://example.net/test3.git\n" );
+    _print( $fh, "target_shift=x/y/z\n" );
+    _print( $fh, "[test4]\n" );
+    _print( $fh, "pull=http://example.net/test4.git\n" );
+    _print( $fh, "source_shift=A\n" );
+    _print( $fh, "target_shift=B\n" );
+    close $fh;
+
+    @modules = $obj->get_modules();
+    is( @modules, 4, '... returns a list of four object' );
+    isa_ok( $modules[0], 'App::Dotfiles::Module' );
+    isa_ok( $modules[1], 'App::Dotfiles::Module' );
+    isa_ok( $modules[2], 'App::Dotfiles::Module' );
+    isa_ok( $modules[3], 'App::Dotfiles::Module' );
+    is( $modules[0]->name,         'test1',                        '... the first has the correct name' );
+    is( $modules[1]->name,         'test2',                        '... the second has the correct name' );
+    is( $modules[2]->name,         'test3',                        '... the third has the correct name' );
+    is( $modules[3]->name,         'test4',                        '... the fourth has the correct name' );
+    is( $modules[0]->pull_url,     'http://example.net/test1.git', '... the first has the correct pull url' );
+    is( $modules[0]->push_url,     undef,                          '... undef push url' );
+    is( $modules[1]->pull_url,     'http://example.net/test2.git', '... the second has the correct pull url' );
+    is( $modules[1]->push_url,     undef,                          '... undef push url' );
+    is( $modules[2]->pull_url,     'http://example.net/test3.git', '... the third has the correct pull url' );
+    is( $modules[2]->push_url,     undef,                          '... undef push url' );
+    is( $modules[3]->pull_url,     'http://example.net/test4.git', '... the fourth has the correct pull url' );
+    is( $modules[3]->push_url,     undef,                          '... undef push url' );
+    is( $modules[0]->source_shift, q{.},                           '... the first has the correct default source_shift' );
+    isa_ok( $modules[0]->source_shift, 'Path::Tiny' );
+    is( $modules[0]->target_shift, q{.}, '... default target_shift' );
+    isa_ok( $modules[0]->target_shift, 'Path::Tiny' );
+    is( $modules[1]->source_shift, path('a/b c/d'), '... the second has the correct source_shift' );
+    isa_ok( $modules[1]->source_shift, 'Path::Tiny' );
+    is( $modules[1]->target_shift, q{.}, '... default target_shift' );
+    isa_ok( $modules[1]->target_shift, 'Path::Tiny' );
+    is( $modules[2]->source_shift, q{.}, '... the third has the correct default source_shift' );
+    isa_ok( $modules[2]->source_shift, 'Path::Tiny' );
+    is( $modules[2]->target_shift, path('x/y/z'), '... target_shift' );
+    isa_ok( $modules[2]->target_shift, 'Path::Tiny' );
+    is( $modules[3]->source_shift, 'A', '... the fourth has the correct source_shift' );
+    isa_ok( $modules[3]->source_shift, 'Path::Tiny' );
+    is( $modules[3]->target_shift, 'B', '... target_shift' );
+    isa_ok( $modules[3]->target_shift, 'Path::Tiny' );
 
     #
     note('two modules w/ push url');

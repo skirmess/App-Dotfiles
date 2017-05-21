@@ -12,6 +12,7 @@ use Log::Any::Test;
 use Log::Any qw($log);
 
 use File::Spec;
+use Path::Tiny;
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Module;
@@ -55,6 +56,8 @@ sub main {
                 push_url                      => 'http://example.net/TEST_PUSH.git',
                 git                           => 'SHOULD_BE_IGNORED',
                 modules_config_file_path      => 'SHOULD_BE_IGNORED',
+                source_shift                  => path('a/b/c'),
+                target_shift                  => path('A/B/C'),
             ]
         );
 
@@ -85,6 +88,22 @@ sub main {
 
             is( $obj2->_verify_remotes_before_update, 1, q{attribute '_verify_remotes_before_update'} );
             is( $obj3->_verify_remotes_before_update, 1, q{attribute '_verify_remotes_before_update'} );
+
+            isa_ok( $obj->source_shift,  'Path::Tiny' );
+            isa_ok( $obj2->source_shift, 'Path::Tiny' );
+
+            is( $obj->source_shift,  q{.},          q{attribute 'source_shift' defaults to '.'} );
+            is( $obj2->source_shift, path('a/b/c'), q{... can be set with constructor} );
+            dies_ok { $obj->source_shift('abc') } '... is a read-only accessor';
+            dies_ok { $obj2->source_shift('abc') } '... is a read-only accessor';
+
+            isa_ok( $obj->target_shift,  'Path::Tiny' );
+            isa_ok( $obj2->target_shift, 'Path::Tiny' );
+
+            is( $obj->target_shift,  q{.},          q{attribute 'target_shift' defaults to '.'} );
+            is( $obj2->target_shift, path('A/B/C'), q{... can be set with constructor} );
+            dies_ok { $obj->target_shift('abc') } '... is a read-only accessor';
+            dies_ok { $obj2->target_shift('abc') } '... is a read-only accessor';
         }
         elsif ( $class eq 'App::Dotfiles::Module::Config' ) {
             like( exception { $class->new() }, qr{Missing required arguments: runtime}, q{'runtime' is required with 'new()'} );

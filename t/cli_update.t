@@ -132,8 +132,6 @@ sub main {
     $log->contains_ok( qr{Updating config '[.]config'},                                '... updating message' );
     $log->contains_ok( qr{Cloning repository '$test1_repo' into '$home/.files/test1'}, '... cloning message' );
     $log->contains_ok( qr{Dotfiles updated successfully},                              '... updated successfully message' );
-    $log->contains_ok( qr{Planning 'stow' actions},                                    '... planning stow message' );
-    $log->contains_ok( qr{Stowing modules test1},                                      '... stowing test1 message' );
 
     $log->empty_ok('... no more logs');
 
@@ -145,8 +143,6 @@ sub main {
     $log->contains_ok( qr{Verifying 'remotes' config of module 'test1'}, '... verifying remotes message' );
     $log->contains_ok( qr{Updating module 'test1'},                      '... other updating message' );
     $log->contains_ok( qr{Dotfiles updated successfully},                '... updated successfully message' );
-    $log->contains_ok( qr{Planning 'stow' actions},                      '... planning stow message' );
-    $log->contains_ok( qr{Stowing modules test1},                        '... stowing test1 message' );
 
     $log->empty_ok('... no more logs');
 
