@@ -127,7 +127,7 @@ sub _create_actions {
 
     my $runtime       = $self->runtime;
     my $home_path     = path( $runtime->home_path );
-    my $dotfiles_path = path( $runtime->dotfiles_path );
+    my $dotfiles_path = path( $runtime->dotfiles_path )->realpath();
 
     my @actions;
     my %action;

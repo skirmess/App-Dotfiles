@@ -493,6 +493,32 @@ sub main {
     is( $x, 'hello world', '.vimrc was correctly moved back into module' );
 
     #
+    note('home is reached through symlink');
+    my $tmpdir = path( tempdir() )->child('home');
+    $home = path( tempdir() )->child('HOME');
+    $tmpdir->mkpath();
+    symlink $tmpdir, $home;
+
+    $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
+
+    $mod1 = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod1' ] );
+
+    $mod1_path = path( $mod1->module_path );
+    $mod1_path->mkpath;
+    $mod1_path->child('file.txt')->spew();
+
+    $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
+    $linker->plan_module($mod1);
+    $linker->run();
+
+    # Run linker again, we should not correctly identify the symlink
+    #   file.txt -> .files/mod1/file.txt
+    # as ours. This might fail because home is reached through a symlink.
+    $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
+    $linker->plan_module($mod1);
+    is( exception { $linker->run() }, undef, 'Running linker again correctly identifies the symlink created in the last run as our. (home is reached through a symlink)' );
+
+    #
     $log->empty_ok('nothing was logged');
 
     #
