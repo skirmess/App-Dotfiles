@@ -7,8 +7,7 @@ use Test::More;
 use Test::Fatal;
 use Test::TempDir::Tiny;
 
-use Log::Any::Test;
-use Log::Any qw($log);
+use Capture::Tiny qw(capture);
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::CLI::Command;
@@ -21,8 +20,10 @@ sub main {
 
     my $obj = new_ok( 'App::Dotfiles::CLI::Command', [ runtime => $runtime ] );
 
-    is( $obj->run_help(), undef, 'run_help() returns undef' );
-    $log->empty_ok('... log is empty');
+    my ( $stdout, $stderr, @result ) = capture { $obj->run_help() };
+    is( $result[0], undef, '... returns undef' );
+    is( $stdout,    q{},   '... prints nothing to stdout' );
+    is( $stderr,    q{},   '... and nothing to stderr' );
 
     #
     done_testing();

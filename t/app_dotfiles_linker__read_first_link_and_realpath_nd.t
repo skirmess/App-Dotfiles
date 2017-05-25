@@ -9,9 +9,6 @@ use Test::More;
 use Test::Fatal;
 use Test::TempDir::Tiny;
 
-use Log::Any::Test;
-use Log::Any qw($log);
-
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Linker;
 
@@ -137,9 +134,6 @@ sub main {
 
     $link_result = $obj->_read_first_link_and_realpath_nd($link_rel_rel_non_existing);
     is( $link_result, $link_rel_non_existing, 'resolves correctly' );
-
-    #
-    $log->empty_ok('nothing was logged');
 
     #
     done_testing();

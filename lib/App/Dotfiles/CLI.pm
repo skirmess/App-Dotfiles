@@ -14,7 +14,6 @@ use App::Dotfiles::Error;
 use App::Dotfiles::Runtime;
 
 use Moo;
-with 'MooX::Role::Logger';
 use namespace::clean;
 
 has runtime => (
@@ -121,7 +120,7 @@ sub _cmd_version {
     App::Dotfiles::Error::E_USAGE->throw('usage error in command option section')
       if @ARGV > 0;
 
-    $self->_logger->info("dotf version $VERSION");
+    print "dotf version $VERSION\n";
 
     return;
 }

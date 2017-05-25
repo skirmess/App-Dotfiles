@@ -9,9 +9,6 @@ use Test::More;
 use Test::Fatal;
 use Test::TempDir::Tiny;
 
-use Log::Any::Test;
-use Log::Any qw($log);
-
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Module;
 
@@ -110,9 +107,6 @@ sub main {
     note($exception);
     isa_ok( $exception, 'App::Dotfiles::Error', 'get_linkables() throws an exception when run with a source_path_prefix on a dir without permissions' );
     like( $exception, qr{Unable to read directory '$test_ws}, '... with correct message' );
-
-    #
-    $log->empty_ok('nothing was logged');
 
     #
     done_testing();

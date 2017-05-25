@@ -14,8 +14,7 @@ use File::Path qw(make_path);
 
 use Git::Wrapper;
 
-use Log::Any::Test;
-use Log::Any qw($log);
+use Capture::Tiny qw(capture);
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::CLI::Command;
@@ -23,6 +22,7 @@ use App::Dotfiles::CLI::Command;
 ## no critic (RegularExpressions::RequireDotMatchAnything)
 ## no critic (RegularExpressions::RequireExtendedFormatting)
 ## no critic (RegularExpressions::RequireLineBoundaryMatching)
+## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
 
 main();
 
@@ -41,25 +41,44 @@ sub main {
 
     #
     note(' ~/.files does not exist');
-    isa_ok( exception { $obj->run_update() }, 'App::Dotfiles::Error::E_NO_CONFIG_REPOSITORY', 'run_update() throws an exception when the config dir does not exist.' );
-    $log->empty_ok('... log is empty');
+    {
+        my ( $stdout, $stderr, @result ) = capture {
+            exception { $obj->run_update() }
+        };
+
+        isa_ok( $result[0], 'App::Dotfiles::Error::E_NO_CONFIG_REPOSITORY', 'run_update() throws an exception when the config dir does not exist.' );
+        is( $stdout, q{}, '... prints nothing to stdout' );
+        is( $stderr, q{}, '... and nothing to stderr' );
+    }
 
     #
     note('~/.files/.config/.git exists but is not a Git repository');
     my $config_path = File::Spec->catfile( $home, '.files', '.config' );
     make_path( File::Spec->catfile( $config_path, '.git' ) );
 
-    like( exception { $obj->run_update() }, qr{Directory '$home/[.]files/[.]config' exists but is not a valid Git directory}, '... throws an axception when the config dir exists but is not a Git repository' );
-    $log->empty_ok('... log is empty');
+    {
+        my ( $stdout, $stderr, @result ) = capture {
+            exception { $obj->run_update() }
+        };
+        like( $result[0], qr{Directory '$home/[.]files/[.]config' exists but is not a valid Git directory}, '... throws an axception when the config dir exists but is not a Git repository' );
+        is( $stdout, q{}, '... prints nothing to stdout' );
+        is( $stderr, q{}, '... and nothing to stderr' );
+    }
 
     #
     note('~/.files/.config exists and is a Git repository');
     my $git = Git::Wrapper->new($config_path);
     $git->init();
 
-    isa_ok( exception { $obj->run_update() }, 'Git::Wrapper::Exception', '... throws an error if the config dir exists and is a Git repository but no remote repository is defined' );
-    $log->contains_ok( qr{Updating config '[.]config'}, '... logs the updating message' );
-    $log->empty_ok('... no more logs');
+    {
+        my ( $stdout, $stderr, @result ) = capture {
+            exception { $obj->run_update() }
+        };
+        chomp $stdout;
+        isa_ok( $result[0], 'Git::Wrapper::Exception', '... throws an error if the config dir exists and is a Git repository but no remote repository is defined' );
+        is( $stdout, q{Updating config '.config'}, '... prints the updating message' );
+        is( $stderr, q{}, '... and nothing to stderr' );
+    }
 
     #
     note('~/.files/.config exists and is a Git repository with a valid remote');
@@ -78,11 +97,16 @@ sub main {
     $git->commit( '-q', '-m', 'test' );
     $git->remote( 'add', 'origin', "$repositories/config.git" );
     $git->push( '-q', '--set-upstream', 'origin', 'master' );
-    $log->empty_ok('... log is empty');
 
-    like( exception { $obj->run_update() }, qr{Missing config file '$home/[.]files/[.]config/modules[.]ini'}, '... throws an exception if there is no modules.ini file' );
-    $log->contains_ok( qr{Updating config '[.]config'}, '... updating message' );
-    $log->empty_ok('... no more logs');
+    {
+        my ( $stdout, $stderr, @result ) = capture {
+            exception { $obj->run_update() }
+        };
+        chomp $stdout;
+        like( $result[0], qr{Missing config file '$home/[.]files/[.]config/modules[.]ini'}, '... throws an exception if there is no modules.ini file' );
+        is( $stdout, q{Updating config '.config'}, '... updating message' );
+        is( $stderr, q{}, '... and nothing to stderr' );
+    }
 
     #
     note('with a modules.ini file');
@@ -91,10 +115,17 @@ sub main {
     $git->add( File::Spec->catfile( $config_path, 'modules.ini' ) );
     $git->commit( '-q', '-m', 'test' );
 
-    is( $obj->run_update(), undef, 'run_update() returns undef' );
-    $log->contains_ok( qr{Updating config '[.]config'},            '... updating message' );
-    $log->contains_ok( qr{No modules configured in 'modules.ini'}, q{... logs the warning that no modules are configured in 'modules.ini'} );
-    $log->empty_ok('... no more logs');
+    {
+        my ( $stdout, $stderr, @result ) = capture { $obj->run_update() };
+        my @stdout = split /\n/, $stdout;
+        chomp @stdout;
+        is( $result[0], undef,                                     'run_update() returns undef' );
+        is( $stdout[0], q{Updating config '.config'},              '... updating message' );
+        is( $stdout[1], q{No modules configured in 'modules.ini'}, q{... prints the warning that no modules are configured in 'modules.ini'} );
+        is( @stdout,    2,                                         '... no more output' );
+        is( $stderr,    q{},                                       '... and nothing to stderr' );
+
+    }
 
     #
     note('Add a module to modules.ini and let it be cloned');
@@ -116,7 +147,6 @@ sub main {
     $git_remote->commit( '-q', '-m', 'test' );
     $git_remote->remote( 'add', 'origin', $test1_repo );
     $git_remote->push( '-q', '--set-upstream', 'origin', 'master' );
-    $log->empty_ok('... log is empty');
 
     open $fh, '>', File::Spec->catfile( $config_path, 'modules.ini' );
     _print( $fh, "[test1]\n" );
@@ -128,23 +158,34 @@ sub main {
     ok( !-e File::Spec->catfile( $home, '.files', 'test1' ), 'repo test1 does not exist' );
 
     note('clone');
-    is( $obj->run_update(), undef, 'run_update() returns undef' );
-    $log->contains_ok( qr{Updating config '[.]config'},                                '... updating message' );
-    $log->contains_ok( qr{Cloning repository '$test1_repo' into '$home/.files/test1'}, '... cloning message' );
-    $log->contains_ok( qr{Dotfiles updated successfully},                              '... updated successfully message' );
-
-    $log->empty_ok('... no more logs');
+    {
+        my ( $stdout, $stderr, @result ) = capture { $obj->run_update() };
+        my @stdout = split /\n/, $stdout;
+        chomp @stdout;
+        is( $result[0], undef,                                                        'run_update() returns undef' );
+        is( $stdout[0], q{Updating config '.config'},                                 '... updating message' );
+        is( $stdout[1], "Cloning repository '$test1_repo' into '$home/.files/test1'", '... cloning message' );
+        is( $stdout[2], "Linking $home/test.txt to .files/test1/test.txt",            '... linking output' );
+        is( $stdout[3], q{Dotfiles updated successfully},                             '... updated successfully message' );
+        is( @stdout,    4,                                                            '... no more output' );
+        is( $stderr,    q{},                                                          '... and nothing to stderr' );
+    }
 
     ok( -e File::Spec->catfile( $home, '.files', 'test1' ), 'repo test1 does now exist' );
 
     note('update');
-    is( $obj->run_update(), undef, 'run_update() returns undef' );
-    $log->contains_ok( qr{Updating config '[.]config'},                  '... updating message' );
-    $log->contains_ok( qr{Verifying 'remotes' config of module 'test1'}, '... verifying remotes message' );
-    $log->contains_ok( qr{Updating module 'test1'},                      '... other updating message' );
-    $log->contains_ok( qr{Dotfiles updated successfully},                '... updated successfully message' );
-
-    $log->empty_ok('... no more logs');
+    {
+        my ( $stdout, $stderr, @result ) = capture { $obj->run_update() };
+        my @stdout = split /\n/, $stdout;
+        chomp @stdout;
+        is( $result[0], undef,                                           'run_update() returns undef' );
+        is( $stdout[0], q{Updating config '.config'},                    '... updating message' );
+        is( $stdout[1], q{Verifying 'remotes' config of module 'test1'}, '... verifying remotes message' );
+        is( $stdout[2], q{Updating module 'test1'},                      '... other updating message' );
+        is( $stdout[3], q{Dotfiles updated successfully},                '... updated successfully message' );
+        is( @stdout,    4,                                               '... no more output' );
+        is( $stderr,    q{},                                             '... and nothing to stderr' );
+    }
 
     ok( -e File::Spec->catfile( $home, '.files', 'test1' ), 'repo test1 exists' );
 

@@ -8,9 +8,6 @@ use Test::Fatal qw(dies_ok exception);
 use Test::More;
 use Test::TempDir::Tiny;
 
-use Log::Any::Test;
-use Log::Any qw($log);
-
 use File::Spec;
 use Path::Tiny;
 
@@ -176,9 +173,6 @@ sub main {
         isa_ok( $obj2->git, 'Git::Wrapper', q{attribute 'git'} );
         isa_ok( $obj3->git, 'Git::Wrapper', q{attribute 'git'} );
     }
-
-    #
-    $log->empty_ok('nothing was logged');
 
     #
     done_testing();

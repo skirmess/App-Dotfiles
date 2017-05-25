@@ -10,9 +10,6 @@ use Test::More;
 use Test::Fatal;
 use Test::TempDir::Tiny;
 
-use Log::Any::Test;
-use Log::Any qw($log);
-
 use Git::Wrapper;
 
 use App::Dotfiles::Runtime;
@@ -199,10 +196,6 @@ sub main {
         @status = $obj->get_repository_status();
         is_deeply( \@status, $status_expected_ref, 'returns correct modifications for dirty module' );
     }
-
-    #
-    note(q{#});
-    $log->empty_ok('nothing was logged');
 
     #
     done_testing();

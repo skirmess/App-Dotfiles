@@ -4,7 +4,6 @@ use 5.006;
 use strict;
 use warnings;
 
-use Log::Any::Adapter;
 use Pod::Usage;
 use Safe::Isa;
 use Try::Tiny;
@@ -18,9 +17,7 @@ exit 1;
 
 sub main {
     try {
-        Log::Any::Adapter->set( 'Screen', min_level => 'debug' );
-
-        my $dotf = App::Dotfiles::CLI->new()->main();
+        App::Dotfiles::CLI->new()->main();
     }
     catch {
         if ( $_->$_isa('App::Dotfiles::Error::E_USAGE') ) {

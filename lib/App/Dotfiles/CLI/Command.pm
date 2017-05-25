@@ -15,7 +15,7 @@ use App::Dotfiles::Linker;
 use App::Dotfiles::Module::Config;
 
 use Moo;
-with 'MooX::Role::Logger', 'App::Dotfiles::Role::Runtime';
+with 'App::Dotfiles::Role::Runtime';
 use namespace::clean;
 
 sub run_help {
@@ -46,7 +46,7 @@ sub run_init {
     App::Dotfiles::Error->throw("Config '$name' exists already")
       if $config->does_repository_exist();
 
-    $self->_logger->info("Initializing config '$name'");
+    print "Initializing config '$name'\n";
 
     $config->clone_repository();
 
@@ -80,28 +80,28 @@ sub run_status {
         my $module = $modules{$name};
 
         if ( !$module->$_DOES('App::Dotfiles::Role::Repository') ) {
-            $self->_logger->error(" + $dotfiles_path/$name");
+            print " + $dotfiles_path/$name\n";
             next MODULE;
         }
 
         try {
             if ( $module->does_repository_exist() ) {
                 for my $changes_ref ( $module->get_repository_status() ) {
-                    $self->_logger->info("$changes_ref->[0] $changes_ref->[1]");
+                    print "$changes_ref->[0] $changes_ref->[1]\n";
                 }
             }
             elsif ( -e "$dotfiles_path/$name" ) {
 
                 # directory exists but is not a git repository
-                $self->_logger->error(" ~ $dotfiles_path/$name");
+                print " ~ $dotfiles_path/$name\n";
             }
             else {
                 # directory does not exist
-                $self->_logger->error(" - $dotfiles_path/$name");
+                print " - $dotfiles_path/$name\n";
             }
         }
         catch {
-            $self->_logger->error($_);
+            print "$_\n";
         };
     }
 
@@ -118,7 +118,7 @@ sub run_update {
       if !$config->does_repository_exist();
 
     my $name = $config->name;
-    $self->_logger->info("Updating config '$name'");
+    print "Updating config '$name'\n";
 
     $config->update_repository();
 
@@ -135,7 +135,7 @@ sub _update_modules {
 
     if ( @modules == 0 ) {
         my $modules_config_file = $runtime->modules_config_file;
-        $self->_logger->warning("No modules configured in '$modules_config_file'");
+        print "No modules configured in '$modules_config_file'\n";
         return;
     }
 
@@ -146,29 +146,29 @@ sub _update_modules {
             my $module_name = $module->name();
 
             if ( $module->does_repository_exist() ) {
-                $self->_logger->info("Verifying 'remotes' config of module '$module_name'");
+                print "Verifying 'remotes' config of module '$module_name'\n";
                 $module->verify_remote();
 
-                $self->_logger->info("Updating module '$module_name'");
+                print "Updating module '$module_name'\n";
                 $module->update_repository();
             }
             else {
                 my $pull_url    = $module->pull_url;
                 my $module_path = $module->module_path;
-                $self->_logger->info("Cloning repository '$pull_url' into '$module_path'");
+                print "Cloning repository '$pull_url' into '$module_path'\n";
                 $module->clone_repository();
             }
 
             $linker->plan_module($module);
         }
         catch {
-            $self->_logger->error($_);
+            print "$_\n";
         };
     }
 
     $linker->run();
 
-    $self->_logger->info('Dotfiles updated successfully');
+    print "Dotfiles updated successfully\n";
 
     return;
 }

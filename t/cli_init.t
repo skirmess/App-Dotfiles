@@ -12,8 +12,7 @@ use File::Path qw(make_path);
 
 use Git::Wrapper;
 
-use Log::Any::Test;
-use Log::Any qw($log);
+use Capture::Tiny qw(capture);
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::CLI::Command;
@@ -33,20 +32,32 @@ sub main {
     my $url = 'http://git.example.net/test.git';
 
     #
-    note('~/.files/.config/.git exists but is not a Git repository');
     my $config_path = File::Spec->catfile( $home, '.files', '.config' );
-    make_path( File::Spec->catfile( $config_path, '.git' ) );
+    note('~/.files/.config/.git exists but is not a Git repository');
+    {
+        make_path( File::Spec->catfile( $config_path, '.git' ) );
 
-    like( exception { $obj->run_init($url) }, qr{Directory '$home/[.]files/[.]config' exists but is not a valid Git directory}, '... throws an exception when the config dir exists but is not a Git repository' );
-    $log->empty_ok('... log is empty');
+        my ( $stdout, $stderr, @result ) = capture {
+            exception { $obj->run_init($url) }
+        };
+        like( $result[0], qr{Directory '$home/[.]files/[.]config' exists but is not a valid Git directory}, '... throws an exception when the config dir exists but is not a Git repository' );
+        is( $stdout, q{}, '... prints nothing to stdout' );
+        is( $stderr, q{}, '... and nothing to stderr' );
+    }
 
     #
     note('~/.files/.config exists and is a Git repository');
     my $git = Git::Wrapper->new($config_path);
-    $git->init();
+    {
+        $git->init();
 
-    like( exception { $obj->run_init($url) }, qr{Config '[.]config' exists already}, '... throws an error if the config dir exists and is a git repository' );
-    $log->empty_ok('... no more logs');
+        my ( $stdout, $stderr, @result ) = capture {
+            exception { $obj->run_init($url) }
+        };
+        like( $result[0], qr{Config '[.]config' exists already}, '... throws an error if the config dir exists and is a git repository' );
+        is( $stdout, q{}, '... prints nothing to stdout' );
+        is( $stderr, q{}, '... and nothing to stderr' );
+    }
 
     #
     note('no modules.ini file in repository');
@@ -67,9 +78,15 @@ sub main {
 
     $obj = new_ok( 'App::Dotfiles::CLI::Command', [ runtime => $runtime ] );
 
-    like( exception { $obj->run_init($remote_config) }, qr{Missing config file '$home/[.]files/[.]config/modules[.]ini'}, 'run_init() throws an error if the config repository contains no modules.ini file' );
-    $log->contains_ok(q{Initializing config '.config'});
-    $log->empty_ok('... no more logs');
+    {
+        my ( $stdout, $stderr, @result ) = capture {
+            exception { $obj->run_init($remote_config) }
+        };
+        like( $result[0], qr{Missing config file '$home/[.]files/[.]config/modules[.]ini'}, 'run_init() throws an error if the config repository contains no modules.ini file' );
+        chomp $stdout;
+        is( $stdout, q{Initializing config '.config'}, '... prints initialization message to stdout' );
+        is( $stderr, q{}, '... and nothing to stderr' );
+    }
 
     #
     note('empty modules.ini file in repository');
@@ -81,11 +98,16 @@ sub main {
     $obj     = new_ok( 'App::Dotfiles::CLI::Command', [ runtime => $runtime ] );
 
     ok( !-e File::Spec->catfile( $home, '.files', '.config', 'modules.ini' ), 'config repo does not exist' );
-    is( $obj->run_init($remote_config), undef, 'returns undef if the config repository was cloned successfully' );
+    {
+        my ( $stdout, $stderr, @result ) = capture { $obj->run_init($remote_config) };
+        is( $result[0], undef, 'returns undef if the config repository was cloned successfully' );
+        my @stdout = split /\n/, $stdout;
+        chomp @stdout;
+        is( $stdout[0], q{Initializing config '.config'},          '... prints inizializing message' );
+        is( $stdout[1], q{No modules configured in 'modules.ini'}, '... prints no modules configured message' );
+        is( $stderr,    q{},                                       '... and nothing to stderr' );
+    }
     ok( -e File::Spec->catfile( $home, '.files', '.config', 'modules.ini' ), 'config repo does exist' );
-    $log->contains_ok(q{Initializing config '.config'});
-    $log->contains_ok(q{No modules configured in 'modules.ini'});
-    $log->empty_ok('... no more logs');
 
     #
     note('modules.ini with two modules');
@@ -149,20 +171,35 @@ EOF
     for my $file (@files) {
         ok( !-e $file, "File '$file' does not exist" );
     }
-    is( $obj->run_init($remote_config), undef, 'returns undef if the config repository was cloned successfully' );
+    {
+        my ( $stdout, $stderr, @result ) = capture { $obj->run_init($remote_config) };
+        is( $result[0], undef, 'returns undef if the config repository was cloned successfully' );
+        my @stdout = split /\n/, $stdout;
+        chomp @stdout;
+        is( shift @stdout, q{Initializing config '.config'}, '... prints initializing message to stdout' );
+        is( pop @stdout,   q{Dotfiles updated successfully}, '... prints updated successfully message' );
+
+        my @expected;
+        my $repo_path = File::Spec->catfile( $home, '.files', 'module1' );
+        push @expected, "Cloning repository '$repo1' into '$repo_path'";
+        $repo_path = File::Spec->catfile( $home, '.files', 'module 2' );
+        push @expected, "Cloning repository '$repo2' into '$repo_path'";
+
+        push @expected,
+          "Linking $home/dir1 to .files/module1/dir1",
+          "Linking $home/dir2 to .files/module 2/dir2",
+          "Linking $home/file1.txt to .files/module1/file1.txt",
+          "Linking $home/file2.txt to .files/module 2/file2.txt";
+
+        is_deeply( [ sort @stdout ], [ sort @expected ], '... prints cloning messages' );
+
+        is( $stderr, q{}, '... and nothing to stderr' );
+
+    }
+
     for my $file (@files) {
         ok( -e $file, "File '$file' exists now" );
     }
-    $log->contains_ok(q{Initializing config '.config'});
-
-    my $repo_path = File::Spec->catfile( $home, '.files', 'module1' );
-    $log->contains_ok("Cloning repository '$repo1' into '$repo_path'");
-
-    $repo_path = File::Spec->catfile( $home, '.files', 'module 2' );
-    $log->contains_ok("Cloning repository '$repo2' into '$repo_path'");
-
-    $log->contains_ok(q{Dotfiles updated successfully});
-    $log->empty_ok('... no more logs');
 
     #
     done_testing();

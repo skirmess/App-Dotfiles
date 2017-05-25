@@ -9,9 +9,6 @@ use Test::More;
 use Test::Fatal;
 use Test::TempDir::Tiny;
 
-use Log::Any::Test;
-use Log::Any qw($log);
-
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Linker;
 use App::Dotfiles::Module;
@@ -517,9 +514,6 @@ sub main {
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
     $linker->plan_module($mod1);
     is( exception { $linker->run() }, undef, 'Running linker again correctly identifies the symlink created in the last run as our. (home is reached through a symlink)' );
-
-    #
-    $log->empty_ok('nothing was logged');
 
     #
     done_testing();

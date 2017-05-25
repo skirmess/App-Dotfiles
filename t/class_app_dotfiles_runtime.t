@@ -10,9 +10,6 @@ use Test::TempDir::Tiny;
 
 use File::Spec;
 
-use Log::Any::Test;
-use Log::Any qw($log);
-
 use App::Dotfiles::Runtime;
 
 ## no critic (RegularExpressions::RequireDotMatchAnything)
@@ -66,9 +63,6 @@ sub main {
 
     is( $obj->modules_config_file, 'CONFIG_FILE', q{attribute 'dotfiles_path'} );
     dies_ok { $obj->modules_config_file('abc') } '... is a read-only accessor';
-
-    #
-    $log->empty_ok('nothing was logged');
 
     #
     done_testing();
