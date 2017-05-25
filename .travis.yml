@@ -8,6 +8,4 @@ perl:
   - '5.14'
   - '5.12'
   - '5.10'
-
-# Log-Any-Adapter-Screen-0.13 ... Perl v5.10.1 required
-#  - '5.8'
+  - '5.8'
