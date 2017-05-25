@@ -464,12 +464,12 @@ sub main {
         is( $linker->run(),                  undef, q{'link' returns undef} );
 
         ok( -l $home->child('.vimrc'), q{File '.vimrc' is a link} );
-        is( readlink $home->child('.vimrc'), '.files/vim/.vimrc', '... pointing to the correct file' );
+        is( readlink( $home->child('.vimrc') ), '.files/vim/.vimrc', '... pointing to the correct file' );
 
         ok( -d $home->child('.vim'),                   q{File '.vim' is a directory} );
         ok( -d $home->child('.vim/bundle'),            q{File '.vim/bundle' is a directory} );
         ok( -l $home->child('.vim/bundle/vim-plugin'), q{File '.vim/bundle/vim-plugin' is a link} );
-        is( readlink $home->child('.vim/bundle/vim-plugin'), '../../.files/vim-plugin', '... pointing to the correct file' );
+        is( readlink( $home->child('.vim/bundle/vim-plugin') ), '../../.files/vim-plugin', '... pointing to the correct file' );
 
         if ( $i eq 'second' ) {
             unlink $home->child('.vimrc');
