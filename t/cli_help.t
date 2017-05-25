@@ -22,8 +22,9 @@ sub main {
 
     my ( $stdout, $stderr, @result ) = capture { $obj->run_help() };
     is( $result[0], undef, '... returns undef' );
-    is( $stdout,    q{},   '... prints nothing to stdout' );
-    is( $stderr,    q{},   '... and nothing to stderr' );
+
+    # don't test stdout, it might contain strange output from Pod::Usage because $0 is this test script
+    is( $stderr, q{}, '... and nothing to stderr' );
 
     #
     done_testing();
