@@ -443,9 +443,11 @@ sub main {
     @mod = ();
     $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'vim' ] );
     $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'vim-plugin', target_path_prefix => path('.vim/bundle/vim-plugin') ] );
+    $mod[2] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'sshss', source_path_prefix => path('bin'), target_path_prefix => path('.ssh') ] );
+    $mod[3] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'profile', source_path_prefix => path('ksh93') ] );
 
     @mod_path = ();
-    for my $i ( 0 .. 1 ) {
+    for my $i ( 0 .. 3 ) {
         $mod_path[$i] = path( $mod[$i]->module_path );
         $mod_path[$i]->mkpath();
     }
@@ -455,12 +457,22 @@ sub main {
     $mod_path[1]->child('plugin')->mkpath();
     $mod_path[1]->child('plugin/plugin.vim')->spew();
 
+    $mod_path[2]->child('bin')->mkpath();
+    $mod_path[2]->child('bin/sshss')->spew();
+
+    $mod_path[3]->child('ksh93')->mkpath();
+    $mod_path[3]->child('ksh93/.kshrc')->spew();
+
+    $home->child('.ssh')->mkpath();
+
     for my $i ( 'first', 'second', 'third', 'fourth', 'fifth' ) {
         note("$i run");
         $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
 
         is( $linker->plan_module( $mod[0] ), undef, q{'plan_module' returns undef} );
         is( $linker->plan_module( $mod[1] ), undef, q{'plan_module' returns undef} );
+        is( $linker->plan_module( $mod[2] ), undef, q{'plan_module' returns undef} );
+        is( $linker->plan_module( $mod[3] ), undef, q{'plan_module' returns undef} );
         is( $linker->run(),                  undef, q{'link' returns undef} );
 
         ok( -l $home->child('.vimrc'), q{File '.vimrc' is a link} );
@@ -470,6 +482,13 @@ sub main {
         ok( -d $home->child('.vim/bundle'),            q{File '.vim/bundle' is a directory} );
         ok( -l $home->child('.vim/bundle/vim-plugin'), q{File '.vim/bundle/vim-plugin' is a link} );
         is( readlink( $home->child('.vim/bundle/vim-plugin') ), '../../.files/vim-plugin', '... pointing to the correct file' );
+
+        ok( !-l $home->child('.ssh') && -d _, q{Directory '.ssh' was not replaced} );
+        ok( -l $home->child('.ssh/sshss'), q{File '.ssh/sshss' is a link} );
+        is( readlink( $home->child('.ssh/sshss') ), '../.files/sshss/bin/sshss', '... pointing to the correct file' );
+
+        ok( -l $home->child('.kshrc'), q{File '.kshrc' is a link} );
+        is( readlink( $home->child('.kshrc') ), '.files/profile/ksh93/.kshrc', '... pointing to the correct file' );
 
         if ( $i eq 'second' ) {
             unlink $home->child('.vimrc');

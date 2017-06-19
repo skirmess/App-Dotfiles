@@ -67,8 +67,13 @@ sub run {
         my ( $target, $task, $module, $source ) = @{$action};
 
         if ( $task eq 'link' ) {
-            my $module_path = path( $module->module_path );
-            my $source_path = $module_path->child($source);
+            my $module_path        = path( $module->module_path );
+            my $source_path        = $module_path;
+            my $source_path_prefix = $module->source_path_prefix;
+            if ( defined $source_path_prefix ) {
+                $source_path = $source_path->child($source_path_prefix);
+            }
+            $source_path = $source_path->child($source);
             my $target_path = $home_path->child($target);
 
             my $diff = $source_path->relative( $target_path->parent );
@@ -89,8 +94,13 @@ sub run {
         }
 
         if ( $task eq 'move' ) {
-            my $module_path = path( $module->module_path );
-            my $source_path = $module_path->child($source);
+            my $module_path        = path( $module->module_path );
+            my $source_path        = $module_path;
+            my $source_path_prefix = $module->source_path_prefix;
+            if ( defined $source_path_prefix ) {
+                $source_path = $source_path->child($source_path_prefix);
+            }
+            $source_path = $source_path->child($source);
             my $target_path = $home_path->child($target);
 
             # yes, this is link target and link source, which is the reverse
