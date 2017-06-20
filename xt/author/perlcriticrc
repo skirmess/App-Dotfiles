@@ -1,8 +1,5 @@
 severity = 1
 
-[CodeLayout::RequireTidyCode]
-perltidyrc = ../../.perltidyrc
-
 # Broken, doesn't work with X::Y->throw
 [-ControlStructures::ProhibitPostfixControls]
 
