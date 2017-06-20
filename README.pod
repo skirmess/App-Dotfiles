@@ -142,6 +142,85 @@ done with:
 
   $ dotf update
 
+=head2 B<Example 6> Manage your own home directory for a shared account
+
+This example shows you how to bootstrap and manage your own home directory
+and use your preferred shell for a shared account with B<dotf> and B<sshss>.
+
+=head3 Create your own home directory
+
+We create a directory called F<.ryah> under the home directory of the shaed
+account. We will configure this as our own home directory and manage it with
+B<dotf>.
+
+  $ cd ~
+  $ mkdir .ryah
+  $ cd .ryah
+  $ export HOME=$PWD
+
+=head3 Install B<cpanm> and B<local::lib>
+
+This will install them to the F<perl5> directory of your own home directory
+defined above.
+
+  $ unset PERL5LIB
+  $ unset PERL_MB_OPT
+  $ unset PERL_LOCAL_LIB_ROOT
+  $ unset PERL_MM_OPT
+  $ curl -L https://cpanmin.us | perl - App::cpanminus -l $HOME/perl5 local::lib
+
+=head3 Prepare environment to install B<dotf>
+
+The following command must also be added to your profile.
+
+  $ eval "$(perl -I $HOME/perl5/lib/perl5 -Mlocal::lib)"
+
+=head3 Install B<dotf>
+
+  $ cpanm https://github.com/skirmess/App-Dotfiles.git
+
+=head3 Initialize B<dotf>
+
+The B<-h> option is not needed because B<$HOME> was changed above.
+
+  $ dotf init https://github.com/YOUR_ID/dotfiles-config-smartos.git
+
+=head3 Add B<sshss> to modules.ini
+
+The B<~> points to the personal home because B<$HOME> was changed above.
+
+  $ vi ~/.files/.config/modules.ini
+
+  [sshss]
+  pull = https://github.com/skirmess/App-SSH-SwitchShell.git
+  source path prefix = bin
+  target path prefix = .ssh
+
+=head3 Update dotfiles
+
+Create the F<.ssh> directory. We want B<dotf> to only link the B<sshss>
+script to the F<.ssh> directory and not the whole directory.
+
+  $ mkdir ~/.ssh
+  $ dotf update
+
+=head3 Add entry to F<.ssh/authorized_keys> in the shared accounts home dir
+
+This must be added to the F<authorized_keys> file of the shared account
+because B<sshss> only changes your home directory and shell after the session
+is authenticated.
+
+  $ vi ~/../.ssh/authorized_keys
+
+Add in front of your key:
+
+
+  command=".ryah/.ssh/sshss /usr/bin/ksh93"
+
+=head3 Verify that you can login before closing your session
+
+Otherwise remove the command string again. Do not lock yourself out!
+
 =head1 ENVIRONMENT
 
 =over
