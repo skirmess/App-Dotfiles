@@ -118,13 +118,13 @@ takes a URL as argument which can be cloned with Git. This repository
 I<url> will be cloned to F<~/.files/.config> and the I<master> branch
 will be checked out.
 
-B<dotf> expectes a file called F<modules.ini> in the root of this repository.
+B<dotf> expects a file called F<modules.ini> in the root of this repository.
 
 =head2 B<dotf> B<status>
 
 The B<status> subcommand can be used to show the changes in all Git
 repositories used by B<dotf>. Use this command to see if there are some
-uncommited changes.
+uncommitted changes.
 
 =head2 B<dotf> B<update>
 
@@ -133,7 +133,7 @@ Then, the F<~/.files/.config/modules.ini> file is used to find all required
 Git repositories. These repositories will either be cloned or updated, as
 needed.
 
-Repositories with uncommited changes are skipped.
+Repositories with uncommitted changes are skipped.
 
 The update uses a I<--ff-only> update.
 
@@ -152,7 +152,7 @@ invalid command line options were specified.
 
   $ dotf init https://github.com/YOUR_ID/dotfiles-config-smartos.git
 
-This clones the mentioned repositors to F<~/.files/.config/>, parses the
+This clones the mentioned repositories to F<~/.files/.config/>, parses the
 F<modules.ini> file in this repository and then clones all the repositories
 configured there.
 
@@ -163,7 +163,7 @@ systems or e.g. for home and work systems.
 
   $ dotf update
 
-=head2 B<Example 3> Show uncommited changes in your dotfiles
+=head2 B<Example 3> Show uncommitted changes in your dotfiles
 
   $ dotf status
 
@@ -181,7 +181,7 @@ operation.
   $ git commit .vimrc
   $ git push
 
-It is important to push your changes after commiting them to be able to use
+It is important to push your changes after committing them to be able to use
 them on your other system/accounts.
 
 =head2 B<Example 5> Add a new file to be managed by B<dotf>
@@ -209,7 +209,7 @@ and use your preferred shell for a shared account with B<dotf> and B<sshss>.
 
 =head3 Create your own home directory
 
-We create a directory called F<.ryah> under the home directory of the shaed
+We create a directory called F<.ryah> under the home directory of the shared
 account. We will configure this as our own home directory and manage it with
 B<dotf>.
 
@@ -264,7 +264,7 @@ script to the F<.ssh> directory and not the whole directory.
   $ mkdir ~/.ssh
   $ dotf update
 
-=head3 Add entry to F<.ssh/authorized_keys> in the shared accounts home dir
+=head3 Add entry to F<.ssh/authorized_keys> in the shared accounts home directory
 
 This must be added to the F<authorized_keys> file of the shared account
 because B<sshss> only changes your home directory and shell after the session
@@ -324,7 +324,7 @@ file.
 Git has a very powerful command line interface and you can find a huge amount
 of documentation on the Web. I don't want a dotfiles manager try to handle
 Git operations like merging, conflict resolution, etc. If there is a conflict
-to be resolved or a new file to be commited it should be done with Git
+to be resolved or a new file to be committed it should be done with Git
 directly. The dotfiles manager should only be a collection of convenient
 functions to make it easy to update changes on multiple system.
 

@@ -7,6 +7,6 @@ use warnings;
 # this test was generated with
 # Dist::Zilla::Plugin::Author::SKIRMESS::RepositoryBase 0.021
 
-use Test::MinimumVersion 0.008;
+use Test::DistManifest 1.003;
 
-all_minimum_version_from_metayml_ok();
+manifest_ok();

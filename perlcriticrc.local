@@ -1,0 +1,14 @@
+# Broken, doesn't work with X::Y->throw
+[-ControlStructures::ProhibitPostfixControls]
+
+[InputOutput::RequireCheckedSyscalls]
+exclude_functions = print
+
+[-RegularExpressions::ProhibitComplexRegexes]
+
+[-Subroutines::ProhibitExcessComplexity]
+
+[Variables::RequireLocalizedPunctuationVars]
+allow = %ENV
+
+[-Subroutines::RequireArgUnpacking]

@@ -1,16 +1,28 @@
 #!perl
 
+use 5.006;
 use strict;
 use warnings;
-use autodie;
+
+# this test was generated with
+# Dist::Zilla::Plugin::Author::SKIRMESS::RepositoryBase 0.021
 
 use File::Spec;
 
+use Perl::Critic::Utils qw(all_perl_files);
 use Test::More;
 use Test::Perl::Critic;
 
-my $rcfile = File::Spec->catfile( 'xt', 'author', 'perlcriticrc' );
-Test::Perl::Critic->import( -profile => $rcfile );
-all_critic_ok( 't', 'xt', 'lib', 'bin' );
+my @dirs = qw(bin lib t xt);
 
-# vim: ts=4 sts=4 sw=4 et: syntax=perl
+my @ignores = ();
+my %file;
+@file{ all_perl_files(@dirs) } = ();
+delete @file{@ignores};
+my @files = keys %file;
+
+if ( @files == 0 ) {
+    BAIL_OUT('no files to criticize found');
+}
+
+all_critic_ok(@files);

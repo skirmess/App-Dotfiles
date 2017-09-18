@@ -7,6 +7,6 @@ use warnings;
 # this test was generated with
 # Dist::Zilla::Plugin::Author::SKIRMESS::RepositoryBase 0.021
 
-use Test::MinimumVersion 0.008;
+use Test::Mojibake;
 
-all_minimum_version_from_metayml_ok();
+all_files_encoding_ok( grep { -d } qw( bin lib t xt ) );

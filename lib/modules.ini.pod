@@ -28,7 +28,7 @@ B<source path prefix> directory and its subdirectories are linked.
 The B<target path prefix> path is prepended to every file when it is linked to the
 home directory. This allows us to install modules to subdirectories of the
 home directory without replicating the structure in the module which is
-useful if you're using someone elses repository where you have no influence
+useful if you're using someone else's repository where you have no influence
 on how the files are stored. See L<Example 1> below for an example using
 F<vim-airline>.
 
@@ -39,7 +39,7 @@ F<vim-airline>.
 In this example we use a public github repository for our Vim configuration
 and a private gitlab repository for our .profile file. The vim repository
 uses a different pull and push url, the profile repository uses the same url
-for pulling and pusing. Then we add the vim-airline repository, which is
+for pulling and pushing. Then we add the vim-airline repository, which is
 hosted on github, and link it in the .vim/bundle/vim-airline subdirectory of
 the home directory
 

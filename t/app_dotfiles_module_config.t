@@ -16,7 +16,6 @@ use Test::TempDir::Tiny;
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Module::Config;
 
-## no critic (InputOutput::RequireBriefOpen)
 ## no critic (RegularExpressions::RequireDotMatchAnything)
 ## no critic (RegularExpressions::RequireExtendedFormatting)
 ## no critic (RegularExpressions::RequireLineBoundaryMatching)
