@@ -1,21 +1,28 @@
 #!perl
+
 use 5.006;
 use strict;
 use warnings;
 
+# this test was generated with
+# Dist::Zilla::Plugin::Author::SKIRMESS::RepositoryBase 0.023
+
 use Test::More;
 
-my @modules = (
-    'App::Dotfiles',
-    'App::Dotfiles::CLI',
-    'App::Dotfiles::CLI::Command',
-    'App::Dotfiles::Error',
-    'App::Dotfiles::Linker',
-    'App::Dotfiles::Module',
-    'App::Dotfiles::Module::Config',
-    'App::Dotfiles::Role::Repository',
-    'App::Dotfiles::Role::Runtime',
-    'App::Dotfiles::Runtime',
+use lib qw(lib .);
+
+my @modules = qw(
+  App::Dotfiles
+  App::Dotfiles::CLI
+  App::Dotfiles::CLI::Command
+  App::Dotfiles::Error
+  App::Dotfiles::Linker
+  App::Dotfiles::Module
+  App::Dotfiles::Module::Config
+  App::Dotfiles::Role::Repository
+  App::Dotfiles::Role::Runtime
+  App::Dotfiles::Runtime
+  bin/dotf
 );
 
 plan tests => scalar @modules;
@@ -23,5 +30,3 @@ plan tests => scalar @modules;
 for my $module (@modules) {
     require_ok($module) || BAIL_OUT();
 }
-
-# vim: ts=4 sts=4 sw=4 et: syntax=perl

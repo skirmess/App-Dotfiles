@@ -224,11 +224,11 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::Author::SKIRMESS::RepositoryBase
       name: '@Author::SKIRMESS/Author::SKIRMESS::RepositoryBase'
-      version: '0.021'
+      version: '0.023'
     -
       class: Dist::Zilla::Plugin::Author::SKIRMESS::InsertVersion
       name: '@Author::SKIRMESS/Author::SKIRMESS::InsertVersion'
-      version: '0.021'
+      version: '0.023'
     -
       class: Dist::Zilla::Plugin::NextRelease
       name: '@Author::SKIRMESS/NextRelease'
@@ -250,6 +250,7 @@ x_Dist_Zilla:
             - README.md
             - cpanfile
             - dist.ini
+            - t/00-load.t
             - xt/author/clean-namespaces.t
             - xt/author/critic.t
             - xt/author/minimum_version.t
@@ -293,7 +294,7 @@ x_Dist_Zilla:
     -
       class: Dist::Zilla::Plugin::AutoPrereqs::Perl::Critic
       name: '@Author::SKIRMESS/AutoPrereqs::Perl::Critic'
-      version: '0.003'
+      version: '0.004'
     -
       class: Dist::Zilla::Plugin::SetScriptShebang
       name: '@Author::SKIRMESS/SetScriptShebang'
@@ -509,7 +510,7 @@ x_Dist_Zilla:
         Dist::Zilla::Plugin::CopyFilesFromRelease:
           filename: []
           match:
-            - .pm$
+            - \.pm$
             - ^bin/
       name: '@Author::SKIRMESS/CopyFilesFromRelease'
       version: '0.006'
@@ -533,6 +534,7 @@ x_Dist_Zilla:
             - README.md
             - cpanfile
             - dist.ini
+            - t/00-load.t
             - xt/author/clean-namespaces.t
             - xt/author/critic.t
             - xt/author/minimum_version.t
@@ -552,6 +554,7 @@ x_Dist_Zilla:
             - xt/release/meta-yaml.t
           allow_dirty_match:
             - (?^:\.pm$)
+            - (?^:^bin/)
           changelog: Changes
         Dist::Zilla::Role::Git::Repo:
           git_version: 2.11.0
