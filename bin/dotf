@@ -10,10 +10,12 @@ use Try::Tiny;
 
 use App::Dotfiles::CLI;
 
-main();
+if ( !caller ) {
+    main();
 
-# main() should exit the script - if we reach this, something broke.
-exit 1;
+    # main() should exit the script - if we reach this, something broke.
+    exit 1;
+}
 
 sub main {
     try {
@@ -57,6 +59,8 @@ sub _usage {
 
     return;
 }
+
+1;
 
 __END__
 
