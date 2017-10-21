@@ -1,5 +1,6 @@
 #!perl
 
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -12,15 +13,11 @@ use lib 't/lib';
 use Chalna;
 use App::Dotfiles::Runtime;
 
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-
 main();
 
 sub main {
 
-    like( exception { Chalna->new() }, qr{Missing required arguments: runtime}, q{App::Dotfiles::Role::Runtime requires attribute 'runtime'} );
+    like( exception { Chalna->new() }, "/ \QMissing required arguments: runtime\E /xsm", q{App::Dotfiles::Role::Runtime requires attribute 'runtime'} );
 
     my $obj = new_ok( 'Chalna', [ runtime => 'x' ] );
 

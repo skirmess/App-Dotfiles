@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -25,12 +27,6 @@ BEGIN {
 
 use English qw(-no_match_vars);
 
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-## no critic (ValuesAndExpressions::RequireInterpolationOfMetachars)
-## no critic (NamingConventions::Capitalization)
-
 main();
 
 sub _note_ARGV {
@@ -54,7 +50,7 @@ sub main {
 
         my $exception = exception { $obj->_get_main_options_and_command() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error with invalid options' );
-        like( $exception, qr{usage error in global option section}, '... with the correct message' );
+        like( $exception, "/ \Qusage error in global option section\E /xsm", '... with the correct message' );
         is_deeply( \@ARGV, [], '... @ARGV is empty' );
     }
 
@@ -102,7 +98,7 @@ sub main {
 
         my $exception = exception { $obj->_get_main_options_and_command() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error with invalid options' );
-        like( $exception, qr{usage error in global option section}, '... with the correct message' );
+        like( $exception, "/ \Qusage error in global option section\E /xsm", '... with the correct message' );
     }
 
     #
@@ -113,7 +109,7 @@ sub main {
 
         my $exception = exception { $obj->_get_main_options_and_command() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error without a command' );
-        like( $exception, qr{no command given}, '... with the correct message' );
+        like( $exception, "/ \Qno command given\E /xsm", '... with the correct message' );
     }
 
     #
@@ -124,7 +120,7 @@ sub main {
 
         my $exception = exception { $obj->_get_main_options_and_command() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error without a command' );
-        like( $exception, qr{no command given}, '... with the correct message' );
+        like( $exception, "/ \Qno command given\E /xsm", '... with the correct message' );
     }
 
     note('_cmd_version');
@@ -137,7 +133,7 @@ sub main {
 
         my ( $stdout, $stderr, @result ) = capture { $obj->_cmd_version() };
         is( $result[0], undef, '... returns undef' );
-        like( $stdout, qr{dotf version \d[.]\d+}, '... prints the version to stdout' );
+        like( $stdout, "/ \Qdotf version \E (?: 0 | [1-9][0-9]* ) [.] [0-9]+ /xsm", '... prints the version to stdout' );
         is( $stderr, q{}, '... and nothing to stderr' );
 
         is_deeply( \@ARGV, [], '... @ARGV is empty' );
@@ -150,7 +146,7 @@ sub main {
 
         my $exception = exception { $obj->_cmd_version() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error with invalid options' );
-        like( $exception, qr{usage error in command option section}, '... with the correct message' );
+        like( $exception, "/ \Qusage error in command option section\E /xsm", '... with the correct message' );
         is_deeply( \@ARGV, [qw(--no-such-option)], '... @ARGV is empty' );
     }
 
@@ -164,7 +160,7 @@ sub main {
 
         my $exception = exception { $obj->_cmd_help() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error with invalid options' );
-        like( $exception, qr{usage error in command option section}, '... with the correct message' );
+        like( $exception, "/ \Qusage error in command option section\E /xsm", '... with the correct message' );
         is_deeply( \@ARGV, [qw(--no-such-option)], '... @ARGV is empty' );
     }
 
@@ -178,7 +174,7 @@ sub main {
 
         my $exception = exception { $obj->_cmd_init() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error with invalid options' );
-        like( $exception, qr{usage error in command option section}, '... with the correct message' );
+        like( $exception, "/ \Qusage error in command option section\E /xsm", '... with the correct message' );
         is_deeply( \@ARGV, [], '... @ARGV is empty' );
     }
 
@@ -189,7 +185,7 @@ sub main {
 
         my $exception = exception { $obj->_cmd_init() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error with invalid options' );
-        like( $exception, qr{usage error in command option section}, '... with the correct message' );
+        like( $exception, "/ \Qusage error in command option section\E /xsm", '... with the correct message' );
         is_deeply( \@ARGV, [qw(http://www.example.net/test1.git http://www.example.net/test2.git)], '... @ARGV is empty' );
     }
 
@@ -203,7 +199,7 @@ sub main {
 
         my $exception = exception { $obj->_cmd_status() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error with invalid options' );
-        like( $exception, qr{usage error in command option section}, '... with the correct message' );
+        like( $exception, "/ \Qusage error in command option section\E /xsm", '... with the correct message' );
         is_deeply( \@ARGV, [qw(--no-such-option)], '... @ARGV is empty' );
     }
 
@@ -217,7 +213,7 @@ sub main {
 
         my $exception = exception { $obj->_cmd_update() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error with invalid options' );
-        like( $exception, qr{usage error in command option section}, '... with the correct message' );
+        like( $exception, "/ \Qusage error in command option section\E /xsm", '... with the correct message' );
         is_deeply( \@ARGV, [qw(--no-such-option)], '... @ARGV is empty' );
     }
 
@@ -231,7 +227,7 @@ sub main {
 
         my $exception = exception { $obj->main() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error with invalid command' );
-        like( $exception, qr{unrecognized command 'no-such-command'}, '... with the correct message' );
+        like( $exception, "/ \Qunrecognized command 'no-such-command'\E /xsm", '... with the correct message' );
         is_deeply( \@ARGV, [], '... @ARGV is empty' );
     }
 
@@ -245,7 +241,7 @@ sub main {
 
         my ( $stdout, $stderr, @result ) = capture { $obj->main() };
         is( $result[0], undef, '... returns undef' );
-        like( $stdout, qr{dotf version \d[.]\d+}, '... prints the version to stdout' );
+        like( $stdout, "/ \Qdotf version \E (?: 0 | [1-9][0-9]* ) [.] [0-9]+ /xsm", '... prints the version to stdout' );
         is( $stderr, q{}, '... and nothing to stderr' );
 
         isa_ok( $obj->runtime, 'App::Dotfiles::Runtime' );
@@ -263,7 +259,7 @@ sub main {
 
         my ( $stdout, $stderr, @result ) = capture { $obj->main() };
         is( $result[0], undef, '... returns undef' );
-        like( $stdout, qr{dotf version \d[.]\d+}, '... prints the version to stdout' );
+        like( $stdout, "/ \Qdotf version \E (?: 0 | [1-9][0-9]* ) [.] [0-9]+ /xsm", '... prints the version to stdout' );
         is( $stderr, q{}, '... and nothing to stderr' );
 
         isa_ok( $obj->runtime, 'App::Dotfiles::Runtime' );
@@ -279,7 +275,7 @@ sub main {
 
         is( $obj->runtime, undef, q{... attribute 'runtime' is not defined} );
 
-        my ( $stdout, $stderr, @result ) = capture { $obj->main() };
+        my ( undef, undef, @result ) = capture { $obj->main() };
         is( $result[0], undef, '... returns undef' );
 
         # We don't test the output of STDOUT and STDERR.
@@ -302,7 +298,7 @@ sub main {
 
         my $exception = exception { $obj->main() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_USAGE', '... throws an E_USAGE error with invalid options' );
-        like( $exception, qr{usage error in command option section}, '... with the correct message' );
+        like( $exception, "/ \Qusage error in command option section\E /xsm", '... with the correct message' );
         is_deeply( \@ARGV, [qw(--no-such-option)], '... @ARGV is empty' );
     }
 
@@ -344,7 +340,7 @@ sub main {
         _note_ARGV();
 
         my ( $stdout, $stderr, @result ) = capture { $obj->main() };
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
 
         is( $result[0], undef,                                     '... returns undef' );
@@ -375,7 +371,7 @@ sub main {
         _note_ARGV();
 
         my ( $stdout, $stderr, @result ) = capture { $obj->main() };
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
 
         is( $result[0], undef,                                     '... returns undef' );

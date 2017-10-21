@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -20,7 +22,7 @@ sub main {
 
     my $obj = new_ok( 'App::Dotfiles::CLI::Command', [ runtime => $runtime ] );
 
-    my ( $stdout, $stderr, @result ) = capture { $obj->run_help() };
+    my ( undef, undef, @result ) = capture { $obj->run_help() };
     is( $result[0], undef, '... returns undef' );
 
     # We don't test the output of STDOUT and STDERR.

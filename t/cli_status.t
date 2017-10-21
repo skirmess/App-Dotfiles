@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -18,11 +20,6 @@ use Capture::Tiny qw(capture);
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::CLI::Command;
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
 
 main();
 
@@ -55,13 +52,13 @@ sub main {
     my $config_path = File::Spec->catfile( $home, '.files', '.config' );
     make_path( File::Spec->catfile( $config_path, '.git' ) );
 
-    my $config_dir_path_qm = quotemeta File::Spec->catfile( $home, '.files', '.config' );
+    my $config_dir_path = File::Spec->catfile( $home, '.files', '.config' );
 
     {
         my ( $stdout, $stderr, @result ) = capture {
             exception { $obj->run_status() }
         };
-        like( $result[0], qr{Directory '$config_dir_path_qm' exists but is not a valid Git directory}, '... throws an axception when the config dir exists but is not a Git repository' );
+        like( $result[0], "/ \QDirectory '$config_dir_path' exists but is not a valid Git directory\E /xsm", '... throws an axception when the config dir exists but is not a Git repository' );
         is( $stdout, q{}, '... prints nothing to stdout' );
         is( $stderr, q{}, '... and nothing to stderr' );
     }
@@ -72,13 +69,12 @@ sub main {
     $git->init();
 
     my $config_file_path = File::Spec->catfile( $home, '.files', '.config', 'modules.ini' );
-    my $config_file_path_qm = quotemeta $config_file_path;
 
     {
         my ( $stdout, $stderr, @result ) = capture {
             exception { $obj->run_status() }
         };
-        like( $result[0], qr{Missing config file '$config_file_path_qm'}, 'run_status() throws an error if the config file is missing' );
+        like( $result[0], "/ \QMissing config file '$config_file_path'\E /xsm", 'run_status() throws an error if the config file is missing' );
         is( $stdout, q{}, '... prints nothing to stdout' );
         is( $stderr, q{}, '... and nothing to stderr' );
     }
@@ -104,7 +100,7 @@ sub main {
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_status() };
         is( $result[0], undef, 'run_status() returns undef' );
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( $stdout[0], "?? $config_file_path",                '... prints config file' );
         is( $stdout[1], " + $home/.files/additional_module_1", '... prints additional module' );
@@ -121,7 +117,7 @@ sub main {
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_status() };
         is( $result[0], undef, 'run_status() returns undef' );
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( $stdout[0], "?? $home/.files/.config/modules.ini", '... prints config file' );
         is( $stdout[1], " ~ $home/.files/additional_module_1", '... prints additional module' );
@@ -138,7 +134,7 @@ sub main {
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_status() };
         is( $result[0], undef, 'run_status() returns undef' );
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( $stdout[0], "?? $home/.files/.config/modules.ini", '... prints config file' );
         is( $stdout[1], " + $home/.files/additional_module_1", '... prints additional module' );
@@ -157,7 +153,7 @@ sub main {
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_status() };
         is( $result[0], undef, 'run_status() returns undef' );
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( $stdout[0], "?? $home/.files/.config/modules.ini", '... prints config file' );
         is( $stdout[1], " + $home/.files/additional_module_1", '... prints additional module' );
@@ -173,7 +169,7 @@ sub main {
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_status() };
         is( $result[0], undef, 'run_status() returns undef' );
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( $stdout[0], "?? $home/.files/.config/modules.ini",       '... prints config file' );
         is( $stdout[1], " + $home/.files/additional_module_1",       '... prints additional module' );
@@ -189,7 +185,7 @@ sub main {
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_status() };
         is( $result[0], undef, 'run_status() returns undef' );
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( $stdout[0], "?? $home/.files/.config/modules.ini",       '... prints config file' );
         is( $stdout[1], " + $home/.files/additional_module_1",       '... prints additional module' );

@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -11,10 +13,6 @@ use Test::TempDir::Tiny;
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Linker;
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
 
 main();
 
@@ -33,11 +31,11 @@ sub main {
 
     my $exception = exception { $obj->_read_first_link_and_realpath_nd($file) };
     isa_ok( $exception, 'App::Dotfiles::Error', '_read_first_link_and_realpath_nd() throws an exception if called on a file' );
-    like( $exception, qr{File '$file' is not a symlink}, '... with the correct message' );
+    like( $exception, "/ \QFile '$file' is not a symlink\E /xsm", '... with the correct message' );
 
     $exception = exception { $obj->_read_first_link_and_realpath_nd('x') };
     isa_ok( $exception, 'App::Dotfiles::Error', '_read_first_link_and_realpath_nd() throws an exception if called with a relative path' );
-    like( $exception, qr{File 'x' is not absolute}, '... with the correct message' );
+    like( $exception, "/ \QFile 'x' is not absolute\E /xsm", '... with the correct message' );
 
     #
     note('relative link to file');

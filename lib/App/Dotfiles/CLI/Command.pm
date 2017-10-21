@@ -19,7 +19,7 @@ with 'App::Dotfiles::Role::Runtime';
 use namespace::clean;
 
 sub run_help {
-    my $self = shift;
+    my ($self) = @_;
 
     pod2usage(
         {
@@ -28,15 +28,14 @@ sub run_help {
                                     # 0 = SYNOPSIS
                                     # 2 = all
                                     # 99 = use sections argument
-        }
+        },
     );
 
     return;
 }
 
 sub run_init {
-    my $self = shift;
-    my ($config_repo_url) = @_;
+    my ( $self, $config_repo_url ) = @_;
 
     my $runtime = $self->runtime;
 
@@ -54,7 +53,7 @@ sub run_init {
 }
 
 sub run_status {
-    my $self = shift;
+    my ($self) = @_;
 
     my $runtime = $self->runtime;
     my $config = App::Dotfiles::Module::Config->new( runtime => $runtime );
@@ -67,10 +66,10 @@ sub run_status {
     my $dotfiles_path = $runtime->dotfiles_path;
 
     my $fh;
-    opendir $fh, $dotfiles_path;
+    opendir $fh, $dotfiles_path or App::Dotfiles::Error::E_NO_CONFIG_REPOSITORY->throw("cannot read directory '$dotfiles_path': $!");
     my %modules = map { $_ => 1 }
       grep { $_ ne q{.} && $_ ne q{..} && !-l "$dotfiles_path/$_" && -d _ } readdir $fh;
-    closedir $fh;
+    closedir $fh or App::Dotfiles::Error::E_NO_CONFIG_REPOSITORY->throw("cannot read directory '$dotfiles_path': $!");
 
     @modules{ keys %modules_config } = values %modules_config;
     $modules{ $config->name() } = $config;
@@ -109,7 +108,7 @@ sub run_status {
 }
 
 sub run_update {
-    my $self = shift;
+    my ($self) = @_;
 
     my $runtime = $self->runtime;
     my $config = App::Dotfiles::Module::Config->new( runtime => $runtime );
@@ -126,7 +125,7 @@ sub run_update {
 }
 
 sub _update_modules {
-    my $self = shift;
+    my ($self) = @_;
 
     my $runtime = $self->runtime;
     my $config = App::Dotfiles::Module::Config->new( runtime => $runtime );

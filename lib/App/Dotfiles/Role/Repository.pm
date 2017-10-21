@@ -34,7 +34,7 @@ has push_url => (
 );
 
 sub clone_repository {
-    my $self = shift;
+    my ($self) = @_;
 
     my $pull_url    = $self->pull_url;
     my $push_url    = $self->push_url;
@@ -56,7 +56,7 @@ sub clone_repository {
 }
 
 sub does_repository_exist {
-    my $self = shift;
+    my ($self) = @_;
 
     my $module_path = $self->module_path;
 
@@ -75,7 +75,7 @@ sub does_repository_exist {
 }
 
 sub get_repository_status {
-    my $self = shift;
+    my ($self) = @_;
 
     my $module_path = $self->module_path;
     my $git         = $self->git;
@@ -96,7 +96,7 @@ sub get_repository_status {
 }
 
 sub update_repository {
-    my $self = shift;
+    my ($self) = @_;
 
     my $git = $self->git;
 
@@ -109,7 +109,7 @@ sub update_repository {
 }
 
 sub verify_remote {
-    my $self = shift;
+    my ($self) = @_;
 
     my $pull_url = $self->pull_url;
     App::Dotfiles::Error->throw(q{'pull_url' not defined})
@@ -163,7 +163,7 @@ sub verify_remote {
 }
 
 sub _build_git {
-    my $self = shift;
+    my ($self) = @_;
 
     my $module_path = $self->module_path;
     my $git         = Git::Wrapper->new($module_path);
@@ -172,7 +172,7 @@ sub _build_git {
 }
 
 sub _build_module_path {
-    my $self = shift;
+    my ($self) = @_;
 
     my $runtime       = $self->runtime;
     my $dotfiles_path = $runtime->dotfiles_path;

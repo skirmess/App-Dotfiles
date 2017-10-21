@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -11,11 +13,6 @@ use Test::TempDir::Tiny;
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Module;
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
 
 main();
 
@@ -63,14 +60,14 @@ sub main {
 
     my $exception = exception { $obj->get_linkables('test.txt') };
     isa_ok( $exception, 'App::Dotfiles::Error', 'get_linkables() throws an exception when run on a file' );
-    like( $exception, qr{Not a directory: $test_ws}, '... with correct message' );
+    like( $exception, "/ \QNot a directory: $test_ws\E /xsm", '... with correct message' );
 
     # dir1 and link1
     $test_ws->child('dir1')->mkpath();
     symlink $test_ws->child('dir1')->realpath(), $test_ws->child('link1')->realpath();
     $exception = exception { $obj->get_linkables('test.txt') };
     isa_ok( $exception, 'App::Dotfiles::Error', 'get_linkables() throws an exception when run on a symlink' );
-    like( $exception, qr{Not a directory: $test_ws}, '... with correct message' );
+    like( $exception, "/ \QNot a directory: $test_ws\E /xsm", '... with correct message' );
 
     $linkables = [ sort @{ $obj->get_linkables(q{.}) } ];
     $expected  = [ sort qw(test.txt dir1 link1) ];
@@ -96,7 +93,7 @@ sub main {
     $obj = new_ok( $class, [ runtime => $runtime, name => $name, source_path_prefix => path('dir1/shift1.txt') ] );
     $exception = exception { $obj->get_linkables(q{.}) };
     isa_ok( $exception, 'App::Dotfiles::Error', 'get_linkables() throws an exception when run with a source_path_prefix on a file' );
-    like( $exception, qr{Not a directory: $test_ws}, '... with correct message' );
+    like( $exception, "/ \QNot a directory: $test_ws\E /xsm", '... with correct message' );
 
     # source_path_prefix on a dir with perm 000
     $test_ws->child('dir2')->mkpath();
@@ -106,7 +103,7 @@ sub main {
     $exception = exception { $obj->get_linkables(q{.}) };
     note($exception);
     isa_ok( $exception, 'App::Dotfiles::Error', 'get_linkables() throws an exception when run with a source_path_prefix on a dir without permissions' );
-    like( $exception, qr{Unable to read directory '$test_ws}, '... with correct message' );
+    like( $exception, "/ \QUnable to read directory '$test_ws\E /xsm", '... with correct message' );
 
     #
     done_testing();

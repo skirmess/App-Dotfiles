@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -16,10 +18,6 @@ use Capture::Tiny qw(capture);
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::CLI::Command;
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
 
 main();
 
@@ -40,7 +38,7 @@ sub main {
         my ( $stdout, $stderr, @result ) = capture {
             exception { $obj->run_init($url) }
         };
-        like( $result[0], qr{Directory '$home/[.]files/[.]config' exists but is not a valid Git directory}, '... throws an exception when the config dir exists but is not a Git repository' );
+        like( $result[0], "/ \QDirectory '$home/.files/.config' exists but is not a valid Git directory\E /xsm", '... throws an exception when the config dir exists but is not a Git repository' );
         is( $stdout, q{}, '... prints nothing to stdout' );
         is( $stderr, q{}, '... and nothing to stderr' );
     }
@@ -54,7 +52,7 @@ sub main {
         my ( $stdout, $stderr, @result ) = capture {
             exception { $obj->run_init($url) }
         };
-        like( $result[0], qr{Config '[.]config' exists already}, '... throws an error if the config dir exists and is a git repository' );
+        like( $result[0], "/ \QConfig '.config' exists already\E /xsm", '... throws an error if the config dir exists and is a git repository' );
         is( $stdout, q{}, '... prints nothing to stdout' );
         is( $stderr, q{}, '... and nothing to stderr' );
     }
@@ -82,7 +80,7 @@ sub main {
         my ( $stdout, $stderr, @result ) = capture {
             exception { $obj->run_init($remote_config) }
         };
-        like( $result[0], qr{Missing config file '$home/[.]files/[.]config/modules[.]ini'}, 'run_init() throws an error if the config repository contains no modules.ini file' );
+        like( $result[0], "/ \QMissing config file '$home/.files/.config/modules.ini\E /xsm", 'run_init() throws an error if the config repository contains no modules.ini file' );
         chomp $stdout;
         is( $stdout, q{Initializing config '.config'}, '... prints initialization message to stdout' );
         is( $stderr, q{}, '... and nothing to stderr' );
@@ -101,7 +99,7 @@ sub main {
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_init($remote_config) };
         is( $result[0], undef, 'returns undef if the config repository was cloned successfully' );
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( $stdout[0], q{Initializing config '.config'},          '... prints inizializing message' );
         is( $stdout[1], q{No modules configured in 'modules.ini'}, '... prints no modules configured message' );
@@ -174,7 +172,7 @@ EOF
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_init($remote_config) };
         is( $result[0], undef, 'returns undef if the config repository was cloned successfully' );
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( shift @stdout, q{Initializing config '.config'}, '... prints initializing message to stdout' );
         is( pop @stdout,   q{Dotfiles updated successfully}, '... prints updated successfully message' );

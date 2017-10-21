@@ -20,10 +20,8 @@ has runtime => (
     is => 'rw',
 );
 
-## no critic (ErrorHandling::RequireCarping)
-
 sub main {
-    my $self = shift;
+    my ($self) = @_;
 
     my ( $opt_ref, $command ) = $self->_get_main_options_and_command();
 
@@ -48,7 +46,7 @@ sub main {
 }
 
 sub _get_main_options_and_command {
-    my $self = shift;
+    my ($self) = @_;
 
     my $command;
     my %opt;
@@ -69,7 +67,7 @@ sub _get_main_options_and_command {
 }
 
 sub _cmd_help {
-    my $self = shift;
+    my ($self) = @_;
 
     App::Dotfiles::Error::E_USAGE->throw('usage error in command option section')
       if @ARGV > 0;
@@ -80,7 +78,7 @@ sub _cmd_help {
 }
 
 sub _cmd_init {
-    my $self = shift;
+    my ($self) = @_;
 
     App::Dotfiles::Error::E_USAGE->throw('usage error in command option section')
       if @ARGV != 1;
@@ -93,7 +91,7 @@ sub _cmd_init {
 }
 
 sub _cmd_status {
-    my $self = shift;
+    my ($self) = @_;
 
     App::Dotfiles::Error::E_USAGE->throw('usage error in command option section')
       if @ARGV > 0;
@@ -104,7 +102,7 @@ sub _cmd_status {
 }
 
 sub _cmd_update {
-    my $self = shift;
+    my ($self) = @_;
 
     App::Dotfiles::Error::E_USAGE->throw('usage error in command option section')
       if @ARGV > 0;
@@ -115,7 +113,7 @@ sub _cmd_update {
 }
 
 sub _cmd_version {
-    my $self = shift;
+    my ($self) = @_;
 
     App::Dotfiles::Error::E_USAGE->throw('usage error in command option section')
       if @ARGV > 0;

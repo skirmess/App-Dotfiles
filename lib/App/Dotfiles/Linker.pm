@@ -31,8 +31,7 @@ use Path::Tiny;
 use namespace::clean;
 
 sub plan_module {
-    my $self = shift;
-    my ($module) = @_;
+    my ( $self, $module ) = @_;
 
     my $target_path_prefix = path( $module->target_path_prefix );
 
@@ -55,7 +54,7 @@ sub plan_module {
 }
 
 sub run {
-    my $self = shift;
+    my ($self) = @_;
 
     my $actions_ref = $self->_create_actions();
 
@@ -130,7 +129,7 @@ sub run {
 }
 
 sub _create_actions {
-    my $self = shift;
+    my ($self) = @_;
 
     my $dirs  = $self->_dirs;
     my $links = $self->_links;
@@ -281,8 +280,7 @@ sub _create_actions {
 }
 
 sub _plan_directory {
-    my $self = shift;
-    my ( $module, $path ) = @_;
+    my ( $self, $module, $path ) = @_;
 
     my $new_path = path( $module->target_path_prefix )->child($path);
 
@@ -291,8 +289,7 @@ sub _plan_directory {
 }
 
 sub _plan_directory_content {
-    my $self = shift;
-    my ( $module, $path ) = @_;
+    my ( $self, $module, $path ) = @_;
 
     for my $new_link ( @{ $module->get_linkables($path) } ) {
         $self->_plan_link( $module, $new_link );
@@ -302,8 +299,7 @@ sub _plan_directory_content {
 }
 
 sub _plan_directory_ignore_shift {
-    my $self = shift;
-    my ( $module, $path ) = @_;
+    my ( $self, $module, $path ) = @_;
 
     my $dirs  = $self->_dirs;
     my $links = $self->_links;
@@ -324,8 +320,7 @@ sub _plan_directory_ignore_shift {
 }
 
 sub _plan_link {
-    my $self = shift;
-    my ( $module, $path ) = @_;
+    my ( $self, $module, $path ) = @_;
 
     my $dirs  = $self->_dirs;
     my $links = $self->_links;
@@ -350,8 +345,7 @@ sub _plan_link {
 }
 
 sub _read_first_link_and_realpath_nd {
-    my $self = shift;
-    my ($file) = @_;
+    my ( $self, $file ) = @_;
 
     my $path = path($file);
     App::Dotfiles::Error->throw("File '$file' is not absolute")  if !$path->is_absolute();

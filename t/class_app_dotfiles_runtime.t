@@ -1,5 +1,6 @@
 #!perl
 
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -12,10 +13,6 @@ use File::Spec;
 
 use App::Dotfiles::Runtime;
 
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-
 main();
 
 sub main {
@@ -25,7 +22,7 @@ sub main {
 
     #
     note('home_path is required');
-    like( exception { $class->new() }, qr{Missing required arguments: home_path}, q{'home_path' is required during 'new()'} );
+    like( exception { $class->new() }, "/ \QMissing required arguments: home_path\E /xsm", q{'home_path' is required during 'new()'} );
 
     #
     note('defauls');

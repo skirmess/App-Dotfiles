@@ -1,5 +1,6 @@
 #!perl
 
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -14,10 +15,6 @@ use Path::Tiny;
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Module;
 use App::Dotfiles::Module::Config;
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
 
 main();
 
@@ -55,7 +52,7 @@ sub main {
                 modules_config_file_path      => 'SHOULD_BE_IGNORED',
                 source_path_prefix            => path('a/b/c'),
                 target_path_prefix            => path('A/B/C'),
-            ]
+            ],
         );
 
         my $name3 = 'NAME_3';
@@ -70,13 +67,13 @@ sub main {
                 push_url                      => 'http://example.net/TEST_PUSH.git',
                 git                           => 'SHOULD_BE_IGNORED',
                 modules_config_file_path      => 'SHOULD_BE_IGNORED',
-            ]
+            ],
         );
 
         #
         if ( $class eq 'App::Dotfiles::Module' ) {
-            like( exception { $class->new( name    => $name ) },    qr{Missing required arguments: runtime}, q{'runtime' is required with 'new()'} );
-            like( exception { $class->new( runtime => $runtime ) }, qr{Missing required arguments: name},    q{'name' is required with 'new()'} );
+            like( exception { $class->new( name    => $name ) },    "/ \QMissing required arguments: runtime\E /xsm", q{'runtime' is required with 'new()'} );
+            like( exception { $class->new( runtime => $runtime ) }, "/ \QMissing required arguments: name\E /xsm",    q{'name' is required with 'new()'} );
 
             $obj = new_ok( $class, [ runtime => $runtime, name => $name ] );
 
@@ -103,7 +100,7 @@ sub main {
             dies_ok { $obj2->target_path_prefix('abc') } '... is a read-only accessor';
         }
         elsif ( $class eq 'App::Dotfiles::Module::Config' ) {
-            like( exception { $class->new() }, qr{Missing required arguments: runtime}, q{'runtime' is required with 'new()'} );
+            like( exception { $class->new() }, "/ \QMissing required arguments: runtime\E /xsm", q{'runtime' is required with 'new()'} );
 
             $name3 = $name2 = $name = '.config';
 

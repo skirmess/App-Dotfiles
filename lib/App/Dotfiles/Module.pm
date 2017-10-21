@@ -37,8 +37,7 @@ with 'App::Dotfiles::Role::Runtime', 'App::Dotfiles::Role::Repository';
 use namespace::clean;
 
 sub get_linkables {
-    my $self = shift;
-    my ($path) = @_;
+    my ( $self, $path ) = @_;
 
     $path = path($path);
     my $module_path        = $self->module_path;

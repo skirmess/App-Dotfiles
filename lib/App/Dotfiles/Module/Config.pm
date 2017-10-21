@@ -33,7 +33,7 @@ use Path::Tiny;
 use namespace::clean;
 
 sub get_modules {
-    my $self = shift;
+    my ($self) = @_;
 
     my $runtime     = $self->runtime;
     my $config_file = $self->modules_config_file_path;
@@ -128,7 +128,7 @@ sub get_modules {
 }
 
 sub _build_modules_config_file_path {
-    my $self = shift;
+    my ($self) = @_;
 
     my $runtime = $self->runtime;
 
@@ -140,7 +140,7 @@ sub _build_modules_config_file_path {
 }
 
 sub _build_name {
-    my $self = shift;
+    my ($self) = @_;
 
     my $runtime    = $self->runtime;
     my $config_dir = $runtime->config_dir;

@@ -1,5 +1,6 @@
 #!perl
 
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -11,17 +12,13 @@ use lib 't/lib';
 
 use Boradis;
 
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-
 main();
 
 sub main {
 
-    like( exception { require Aschelan }, qr{Can't apply App::Dotfiles::Role::Repository to Aschelan - missing name, _verify_remotes_before_update at}, q{Role 'App::Dotfiles::Role::Repository' requires 'name'} );
+    like( exception { require Aschelan }, "/ \QCan't apply App::Dotfiles::Role::Repository to Aschelan - missing name, _verify_remotes_before_update at\E /xsm", q{Role 'App::Dotfiles::Role::Repository' requires 'name'} );
 
-    my $obj = new_ok('Boradis');
+    new_ok('Boradis');
 
     done_testing();
 

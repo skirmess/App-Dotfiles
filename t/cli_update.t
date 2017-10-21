@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -18,11 +20,6 @@ use Capture::Tiny qw(capture);
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::CLI::Command;
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
 
 main();
 
@@ -60,7 +57,7 @@ sub main {
         my ( $stdout, $stderr, @result ) = capture {
             exception { $obj->run_update() }
         };
-        like( $result[0], qr{Directory '$home/[.]files/[.]config' exists but is not a valid Git directory}, '... throws an axception when the config dir exists but is not a Git repository' );
+        like( $result[0], "/ \QDirectory '$home/.files/.config' exists but is not a valid Git directory\E /xsm", '... throws an axception when the config dir exists but is not a Git repository' );
         is( $stdout, q{}, '... prints nothing to stdout' );
         is( $stderr, q{}, '... and nothing to stderr' );
     }
@@ -103,7 +100,7 @@ sub main {
             exception { $obj->run_update() }
         };
         chomp $stdout;
-        like( $result[0], qr{Missing config file '$home/[.]files/[.]config/modules[.]ini'}, '... throws an exception if there is no modules.ini file' );
+        like( $result[0], "/ \QMissing config file '$home/.files/.config/modules.ini'\E /xsm", '... throws an exception if there is no modules.ini file' );
         is( $stdout, q{Updating config '.config'}, '... updating message' );
         is( $stderr, q{}, '... and nothing to stderr' );
     }
@@ -117,7 +114,7 @@ sub main {
 
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_update() };
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( $result[0], undef,                                     'run_update() returns undef' );
         is( $stdout[0], q{Updating config '.config'},              '... updating message' );
@@ -160,7 +157,7 @@ sub main {
     note('clone');
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_update() };
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( $result[0], undef,                                                        'run_update() returns undef' );
         is( $stdout[0], q{Updating config '.config'},                                 '... updating message' );
@@ -176,7 +173,7 @@ sub main {
     note('update');
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_update() };
-        my @stdout = split /\n/, $stdout;
+        my @stdout = split /\n/xsm, $stdout;
         chomp @stdout;
         is( $result[0], undef,                                           'run_update() returns undef' );
         is( $stdout[0], q{Updating config '.config'},                    '... updating message' );

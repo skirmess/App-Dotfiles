@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -15,10 +17,6 @@ use Git::Wrapper;
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Module;
 use App::Dotfiles::Module::Config;
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
 
 main();
 
@@ -47,14 +45,13 @@ sub main {
             BAIL_OUT('INTERNAL ERROR');
         }
 
-        my $test_ws       = File::Spec->catfile( $home, '.files', $name );
-        my $test_ws_qm    = quotemeta $test_ws;
+        my $test_ws = File::Spec->catfile( $home, '.files', $name );
         my $test_pull_url = 'http://www.example.net/test.git';
 
         # does_repository_exist
         is( $obj->does_repository_exist(), undef, q{does_repository_exist() returns 'undef' for a non-existing module} );
         make_path( File::Spec->catfile( $test_ws, '.git' ) );
-        like( exception { $obj->does_repository_exist(); }, qr{Directory '$test_ws_qm' exists but is not a valid Git directory}, '... and throws an error for an existing, but invalid .git directory' );
+        like( exception { $obj->does_repository_exist(); }, "/ \QDirectory '$test_ws' exists but is not a valid Git directory\E /xsm", '... and throws an error for an existing, but invalid .git directory' );
         rmdir( File::Spec->catfile( $test_ws, '.git' ) );
 
         my $git = Git::Wrapper->new($test_ws);
@@ -63,11 +60,11 @@ sub main {
         is( $obj->does_repository_exist(), 1, q{... and returns '1' for an existing, valid .git directory} );
 
         # verify_remote
-        like( exception { $obj->verify_remote() }, qr{'pull_url' not defined}, q{verify_remote() throws an error if 'pull_url' is not defined in the obj} );
+        like( exception { $obj->verify_remote() }, "/ \Q'pull_url' not defined\E /xsm", q{verify_remote() throws an error if 'pull_url' is not defined in the obj} );
 
         $obj = new_ok( $class, [ %{$obj}, pull_url => $test_pull_url ] );
 
-        like( exception { $obj->verify_remote(); }, qr{Pull url of remote 'origin' of module '$name' is not configured but should be '$test_pull_url'}, '... throws an error if the workspace has no pull origin defined' );
+        like( exception { $obj->verify_remote(); }, "/ \QPull url of remote 'origin' of module '$name' is not configured but should be '$test_pull_url'\E /xsm", '... throws an error if the workspace has no pull origin defined' );
 
         # defined remote pull url
         $git->remote( 'add', 'origin', 'http://www.example.net/test.git' );
@@ -76,15 +73,15 @@ sub main {
 
         my $test_pull_url_incorrect = 'http://www.example.net/test2.git';
         $obj = new_ok( $class, [ %{$obj}, pull_url => $test_pull_url_incorrect ] );
-        like( exception { $obj->verify_remote(); }, qr{Pull url of remote 'origin' of module '$name' is '$test_pull_url' but should be '$test_pull_url_incorrect'}, q{... throws an error if the 'pull_url' does not match} );
+        like( exception { $obj->verify_remote(); }, "/ \QPull url of remote 'origin' of module '$name' is '$test_pull_url' but should be '$test_pull_url_incorrect'\E /xsm", q{... throws an error if the 'pull_url' does not match} );
 
         my $test_push_url_incorrect = 'http://www.example.net/test3.git';
         $obj = new_ok( $class, [ %{$obj}, pull_url => $test_pull_url, push_url => $test_push_url_incorrect ] );
-        like( exception { $obj->verify_remote(); }, qr{Push url of remote 'origin' of module '$name' is '$test_pull_url' but should be '$test_push_url_incorrect'}, q{... throws an error if the 'push_url' does not match} );
+        like( exception { $obj->verify_remote(); }, "/ \QPush url of remote 'origin' of module '$name' is '$test_pull_url' but should be '$test_push_url_incorrect'\E /xsm", q{... throws an error if the 'push_url' does not match} );
 
         if ( $class ne 'App::Dotfiles::Module::Config' ) {
             $obj = new_ok( $class, [ runtime => $runtime, name => 'does not exist', pull_url => $test_pull_url ] );
-            like( exception { $obj->verify_remote() }, qr{Module 'does not exist' does not exist}, '... throws an error if the modules directory does not exist' );
+            like( exception { $obj->verify_remote() }, "/ \QModule 'does not exist' does not exist\E /xsm", '... throws an error if the modules directory does not exist' );
         }
 
         #
@@ -117,18 +114,16 @@ sub main {
         $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
         $obj = new_ok( $class, [ name => $name, runtime => $runtime ] );
-        like( exception { $obj->clone_repository(); }, qr{Cannot clone repository without a 'pull_url'}, q{clone_repository() throws an error if no 'pull_url' is defined} );
+        like( exception { $obj->clone_repository(); }, "/ \QCannot clone repository without a 'pull_url'\E /xsm", q{clone_repository() throws an error if no 'pull_url' is defined} );
 
         $obj = new_ok( $class, [ %{$obj}, pull_url => File::Spec->catfile( $repositories, 'test.git' ) ] );
 
         my $r_path = File::Spec->catfile( $home, '.files', $name );
-        my $r_path_qm = quotemeta $r_path;
         make_path $r_path;
 
-        my $upstream_repo    = "$repositories/test.git";
-        my $upstream_repo_qm = quotemeta $upstream_repo;
+        my $upstream_repo = "$repositories/test.git";
 
-        like( exception { $obj->clone_repository(); }, qr{Directory '$r_path_qm' already exists}, q{clone_repository() with 'pull_url' throws an error if the target directory exists already} );
+        like( exception { $obj->clone_repository(); }, "/ \QDirectory '$r_path' already exists\E /xsm", q{clone_repository() with 'pull_url' throws an error if the target directory exists already} );
         rmdir $r_path;
 
         ok( !-d File::Spec->catfile( $home, '.files', $name ), q{repository 'name' does not exist before cloning it} );
@@ -140,10 +135,9 @@ sub main {
         ok( -d File::Spec->catfile( $home, '.files', $name ), q{repository 'name' exists after cloning it} );
 
         #
-        $home      = tempdir();
-        $runtime   = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
-        $r_path    = File::Spec->catfile( $home, '.files', $name );
-        $r_path_qm = quotemeta $r_path;
+        $home    = tempdir();
+        $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
+        $r_path  = File::Spec->catfile( $home, '.files', $name );
 
         $obj = new_ok( $class, [ name => $name, runtime => $runtime, pull_url => $upstream_repo, push_url => 'http://example.net/test.git' ] );
         is( $obj->clone_repository(), undef, 'clone_repository() with pull_url and push_url' );

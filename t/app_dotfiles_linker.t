@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -12,11 +14,6 @@ use Test::TempDir::Tiny;
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Linker;
 use App::Dotfiles::Module;
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
 
 main();
 
@@ -51,7 +48,7 @@ sub main {
     $home->child('mod1T')->spew();
 
     is( $linker->plan_module($mod1), undef, q{'plan_module' returns undef} );
-    like( exception { $linker->_create_actions() }, qr{Linking module 'mod1' would cause conflicts: link target '.*' is a file but link source '.*' is not}, q{'_create_actions' throws an exception on conflict} );
+    like( exception { $linker->_create_actions() }, "/ \QLinking module 'mod1' would cause conflicts: link target '\E .* \Q' is a file but link source '\E .* \Q' is not\E /xsm", q{'_create_actions' throws an exception on conflict} );
 
     unlink $home->child('mod1T');
 
@@ -62,7 +59,7 @@ sub main {
     symlink tempdir(), $home->child('mod1T');
 
     is( $linker->plan_module($mod1), undef, q{'plan_module' returns undef} );
-    like( exception { $linker->_create_actions() }, qr{Linking module 'mod1' would cause conflicts: link target '.*' is a symlink that is not managed by us}, q{'_create_actions' throws an exception on conflict} );
+    like( exception { $linker->_create_actions() }, "/ \QLinking module 'mod1' would cause conflicts: link target '\E .* \Q' is a symlink that is not managed by us\E /xsm", q{'_create_actions' throws an exception on conflict} );
 
     unlink $home->child('mod1T');
 
@@ -156,7 +153,7 @@ sub main {
     $links->{test} = 1;
 
     $linker->plan_module($mod1);
-    like( exception { $linker->_create_actions() }, qr{internal error: '_dirs' and '_links' both contain a 'test' at}, 'internal error throws' );
+    like( exception { $linker->_create_actions() }, "/ \Qinternal error: '_dirs' and '_links' both contain a 'test' at\E /xsm", 'internal error throws' );
 
     #
     note('multi directory target_path_prefix');
@@ -348,7 +345,7 @@ sub main {
     is( $linker->plan_module( $mod[0] ), undef, q{'plan_module' returns undef} );
     is( $linker->plan_module( $mod[1] ), undef, q{'plan_module' returns undef} );
 
-    like( exception { $linker->_create_actions() }, qr{Linking module 'module1' would cause conflicts: link target '.*' is a symlink that is not managed by us}, q{'_create_actions' throws an exception on conflict} );
+    like( exception { $linker->_create_actions() }, "/ \QLinking module 'module1' would cause conflicts: link target '\E .* \Q' is a symlink that is not managed by us\E /xsm", q{'_create_actions' throws an exception on conflict} );
 
     unlink $home->child('target');
 

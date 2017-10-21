@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -15,11 +17,6 @@ use Test::TempDir::Tiny;
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Module::Config;
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-## no critic (ValuesAndExpressions::ProhibitMagicNumbers)
 
 main();
 
@@ -41,8 +38,8 @@ sub main {
 
     #
     note('get_modules() throws an error if no modules.ini file exists');
-    my $config_file_path_qm = quotemeta File::Spec->catfile( $home, '.files', '.config', 'modules.ini' );
-    like( exception { $obj->get_modules() }, qr{Missing config file '$config_file_path_qm'}, 'get_modules() throws an exception if there is no config file' );
+    my $config_file_path = File::Spec->catfile( $home, '.files', '.config', 'modules.ini' );
+    like( exception { $obj->get_modules() }, "/ \QMissing config file '$config_file_path'\E /xsm", 'get_modules() throws an exception if there is no config file' );
 
     #
     note('empty config file');
@@ -60,7 +57,7 @@ sub main {
     _print( $fh, "pull=http://example.net/test.git\n" );
     close $fh;
 
-    like( exception { $obj->get_modules() }, qr{Error in configuration file '$config_file_path_qm': global section not allowed}, '... throws an exception if there are entries in the glonal section' );
+    like( exception { $obj->get_modules() }, "/ \QError in configuration file '$config_file_path': global section not allowed\E /xsm", '... throws an exception if there are entries in the glonal section' );
 
     #
     note('pull specified multiple times');
@@ -70,7 +67,7 @@ sub main {
     _print( $fh, "pull=http://example.net/test.git\n" );
     close $fh;
 
-    like( exception { $obj->get_modules() }, qr{'pull' url defined multiple times in section '\[test\]'}, '... throws an exception if pull URL is defined multiple times an a section' );
+    like( exception { $obj->get_modules() }, "/ \Q'pull' url defined multiple times in section '[test]'\E /xsm", '... throws an exception if pull URL is defined multiple times an a section' );
 
     #
     note('push specified multiple times');
@@ -80,7 +77,7 @@ sub main {
     _print( $fh, "push=http://example.net/test.git\n" );
     close $fh;
 
-    like( exception { $obj->get_modules() }, qr{'push' url defined multiple times in section '\[test\]'}, '... throws an exception if push URL is defined multiple times an a section' );
+    like( exception { $obj->get_modules() }, "/ \Q'push' url defined multiple times in section '[test]'\E /xsm", '... throws an exception if push URL is defined multiple times an a section' );
 
     #
     note(q{'target path prefix' specified multiple times});
@@ -90,7 +87,7 @@ sub main {
     _print( $fh, "target path prefix = a/b/c\n" );
     close $fh;
 
-    like( exception { $obj->get_modules() }, qr{'target path prefix' defined multiple times in section '\[test\]'}, q{... throws an exception if 'target path url' is defined multiple times an a section} );
+    like( exception { $obj->get_modules() }, "/ \Q'target path prefix' defined multiple times in section '[test]'\E /xsm", q{... throws an exception if 'target path url' is defined multiple times an a section} );
 
     #
     note(q{'source path prefix' specified multiple times});
@@ -100,7 +97,7 @@ sub main {
     _print( $fh, "source path prefix = a/b/c\n" );
     close $fh;
 
-    like( exception { $obj->get_modules() }, qr{'source path prefix' defined multiple times in section '\[test\]'}, q{... throws an exception if 'source path url' is defined multiple times an a section} );
+    like( exception { $obj->get_modules() }, "/ \Q'source path prefix' defined multiple times in section '[test]'\E /xsm", q{... throws an exception if 'source path url' is defined multiple times an a section} );
 
     # invalid entry (key w/out value)
     open $fh, '>', "$modules_file";
@@ -110,7 +107,7 @@ sub main {
     close $fh;
 
     # error thrown is from Config::Std
-    like( exception { $obj->get_modules() }, qr{Error in config file}, '... throws an exception if there is an error in the config file' );
+    like( exception { $obj->get_modules() }, "/ \QError in config file\E /xsm", '... throws an exception if there is an error in the config file' );
 
     #
     note('invalid entry');
@@ -120,7 +117,7 @@ sub main {
     _print( $fh, "invalid=entry\n" );
     close $fh;
 
-    like( exception { $obj->get_modules() }, qr{Invalid entry 'invalid=entry' in section '\[test\]'}, '... throws an exception if there is an invalid entry' );
+    like( exception { $obj->get_modules() }, "/ \QInvalid entry 'invalid=entry' in section '[test]'\E /xsm", '... throws an exception if there is an invalid entry' );
 
     # multiple invalid entries
     open $fh, '>', "$modules_file";
@@ -130,7 +127,7 @@ sub main {
     _print( $fh, "invalid=entry2\n" );
     close $fh;
 
-    like( exception { $obj->get_modules() }, qr{Invalid entry with key 'invalid' in section '\[test\]'}, '... throws an exception if there are multiple invalid entries' );
+    like( exception { $obj->get_modules() }, "/ \QInvalid entry with key 'invalid' in section '[test]'\E /xsm", '... throws an exception if there are multiple invalid entries' );
 
     #
     note('push w/out pull entry');
@@ -139,14 +136,14 @@ sub main {
     _print( $fh, "push=http://example.net/test.git\n" );
     close $fh;
 
-    like( exception { $obj->get_modules() }, qr{Pull url not defined in section '\[test\]'}, '... throws an exception if there is no pull url' );
+    like( exception { $obj->get_modules() }, "/ \QPull url not defined in section '[test]'\E /xsm", '... throws an exception if there is no pull url' );
 
     # section w/out entries
     open $fh, '>', "$modules_file";
     _print( $fh, "[test]\n" );
     close $fh;
 
-    like( exception { $obj->get_modules() }, qr{Pull url not defined in section '\[test\]'}, '... throws an exception if there is no pull url' );
+    like( exception { $obj->get_modules() }, "/ \QPull url not defined in section '[test]'\E /xsm", '... throws an exception if there is no pull url' );
 
     #
     note('one module');

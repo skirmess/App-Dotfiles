@@ -1,5 +1,6 @@
 #!perl
 
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -11,16 +12,12 @@ use Test::TempDir::Tiny;
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Linker;
 
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-
 main();
 
 sub main {
     my $class = 'App::Dotfiles::Linker';
 
-    like( exception { $class->new() }, qr{Missing required arguments: runtime}, q{'runtime' is required with 'new()'} );
+    like( exception { $class->new() }, "/ \QMissing required arguments: runtime\E /xsm", q{'runtime' is required with 'new()'} );
 
     my $home = tempdir();
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );

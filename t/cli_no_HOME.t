@@ -1,4 +1,6 @@
 #!perl
+
+use 5.006;
 use strict;
 use warnings;
 use autodie;
@@ -14,12 +16,6 @@ BEGIN {
 }
 
 use English qw(-no_match_vars);
-
-## no critic (RegularExpressions::RequireDotMatchAnything)
-## no critic (RegularExpressions::RequireExtendedFormatting)
-## no critic (RegularExpressions::RequireLineBoundaryMatching)
-## no critic (ValuesAndExpressions::RequireInterpolationOfMetachars)
-## no critic (NamingConventions::Capitalization)
 
 main();
 
@@ -39,7 +35,7 @@ sub main {
 
         my $exception = exception { $obj->main() };
         isa_ok( $exception, 'App::Dotfiles::Error', '... throws an exception if no home is specified and $HOME is not set' );
-        like( $exception, qr{Cannot find home directory[.] Is the HOME environment variable set?}, '... with the correct message' );
+        like( $exception, "/ \QCannot find home directory. Is the HOME environment variable set?\E /xsm", '... with the correct message' );
         is_deeply( \@ARGV, [], '... @ARGV is empty' );
     }
 

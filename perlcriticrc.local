@@ -1,14 +1,21 @@
+[-Bangs::ProhibitNumberedNames]
+
 # Broken, doesn't work with X::Y->throw
 [-ControlStructures::ProhibitPostfixControls]
 
-[InputOutput::RequireCheckedSyscalls]
-exclude_functions = print
+# GetOptions uses die '!FINISH'
+[-ErrorHandling::RequireCarping]
 
-[-RegularExpressions::ProhibitComplexRegexes]
+# Doesn't work with failures
+[-Modules::RequireExplicitInclusion]
+
+[-NamingConventions::Capitalization]
 
 [-Subroutines::ProhibitExcessComplexity]
+
+[-ValuesAndExpressions::ProhibitMagicNumbers]
 
 [Variables::RequireLocalizedPunctuationVars]
 allow = %ENV
 
-[-Subroutines::RequireArgUnpacking]
+[-ValuesAndExpressions::RequireInterpolationOfMetachars]

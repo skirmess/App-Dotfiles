@@ -54,7 +54,7 @@ sub _usage {
                                                                # 2 = all
                                                                # 99 = use sections argument
             -sections => [qw(SYNOPSIS OPTIONS SUBCOMMANDS)],
-        }
+        },
     );
 
     return;

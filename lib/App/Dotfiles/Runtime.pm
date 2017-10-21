@@ -31,7 +31,7 @@ has modules_config_file => (
 );
 
 sub BUILD {
-    my $self = shift;
+    my ($self) = @_;
 
     my $home = $self->home_path;
 
@@ -51,7 +51,7 @@ sub BUILD {
 }
 
 sub _build_dotfiles_path {
-    my $self = shift;
+    my ($self) = @_;
 
     my $home = $self->home_path;
 
