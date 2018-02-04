@@ -8,7 +8,6 @@ our $VERSION = '0.001';
 
 use File::HomeDir qw(my_home);
 use Getopt::Long;
-use Try::Tiny;
 
 use App::Dotfiles::CLI::Command;
 use App::Dotfiles::Error;
@@ -28,12 +27,10 @@ sub main {
 
     my $home = $opt_ref->{h};
     if ( !defined $home ) {
-        try {
-            $home = my_home();
-        };
+        $home = my_home();
 
         App::Dotfiles::Error->throw('Cannot find home directory. Is the HOME environment variable set?')
-          if !defined $home;
+          if !defined $home || $home eq q{};
     }
 
     $self->runtime( App::Dotfiles::Runtime->new( home_path => $home ) );
