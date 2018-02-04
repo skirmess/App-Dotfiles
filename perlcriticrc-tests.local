@@ -1,21 +1,10 @@
 [-Bangs::ProhibitNumberedNames]
-
-# Broken, doesn't work with X::Y->throw
-[-ControlStructures::ProhibitPostfixControls]
-
-# GetOptions uses die '!FINISH'
-[-ErrorHandling::RequireCarping]
-
-# Doesn't work with failures
 [-Modules::RequireExplicitInclusion]
-
 [-NamingConventions::Capitalization]
-
 [-Subroutines::ProhibitExcessComplexity]
-
 [-ValuesAndExpressions::ProhibitMagicNumbers]
+[-ValuesAndExpressions::RequireInterpolationOfMetachars]
 
 [Variables::RequireLocalizedPunctuationVars]
 allow = %ENV
 
-[-ValuesAndExpressions::RequireInterpolationOfMetachars]
