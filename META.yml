@@ -25,10 +25,6 @@ meta-spec:
 name: App-Dotfiles
 no_index:
   directory:
-    - corpus
-    - dzil-inc
-    - examples
-    - inc
     - t
     - xt
 provides:
