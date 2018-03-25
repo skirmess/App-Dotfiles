@@ -1,0 +1,278 @@
+NAME
+
+    dotf - dotfiles manager
+
+SYNOPSIS
+
+    dotf [-h <homedir>] help
+
+    dotf [-h <homedir>] init <url>
+
+    dotf [-h <homedir>] status
+
+    dotf [-h <homedir>] update
+
+    dotf [-h <homedir>] version
+
+DESCRIPTION
+
+    The dotfiles manager dotf helps you synchronize your precious dotfiles
+    between multiple Unix systems.
+
+    Your dotfiles will be maintained in one or multiple git repositories.
+    These files are then linked with symlinks to your home directory.
+
+    If someone or something removes the symlink and replaces it with a copy
+    of the file, the next run of dotf update will move the file back into
+    the repository and recreate the symlink.
+
+OPTIONS
+
+    -h homedir
+
+      Specifies the directory that should be used as your home directory.
+      This is the directory in which the dotfiles will be managed.
+
+      If not specified, dotf defaults to your home directory as returned by
+      File::HomeDir.
+
+SUBCOMMANDS
+
+ dotf help
+
+    Prints the help page.
+
+ dotf init
+
+    The init subcommand is used to initialize dotf on a new account. It
+    takes a URL as argument which can be cloned with Git. This repository
+    url will be cloned to ~/.files/.config and the master branch will be
+    checked out.
+
+    dotf expects a file called modules.ini in the root of this repository.
+
+ dotf status
+
+    The status subcommand can be used to show the changes in all Git
+    repositories used by dotf. Use this command to see if there are some
+    uncommitted changes.
+
+ dotf update
+
+    The update subcommand is used to first update the .config repository.
+    Then, the ~/.files/.config/modules.ini file is used to find all
+    required Git repositories. These repositories will either be cloned or
+    updated, as needed.
+
+    Repositories with uncommitted changes are skipped.
+
+    The update uses a --ff-only update.
+
+ dotf version
+
+    Prints the version of dotf and exists.
+
+EXIT STATUS
+
+    The dotf utility exits 0 on success, 1 if an error occurs, and 2 if
+    invalid command line options were specified.
+
+EXAMPLES
+
+ Example 1 Initializing dotf on a new system or account
+
+      $ dotf init https://github.com/YOUR_ID/dotfiles-config-smartos.git
+
+    This clones the mentioned repositories to ~/.files/.config/, parses the
+    modules.ini file in this repository and then clones all the
+    repositories configured there.
+
+    You will probably use different config repositories for different
+    operating systems or e.g. for home and work systems.
+
+ Example 2 Update your dotfiles
+
+      $ dotf update
+
+ Example 3 Show uncommitted changes in your dotfiles
+
+      $ dotf status
+
+    dotf replaces the managed dotfiles in your home directory with
+    symlinks. The dotfiles are moved into the Git repositories under the
+    ~/.file/ directory. The status subcommand can be used to get a git
+    status -s of all your repositories.
+
+ Example 4 Commit changed files
+
+    The dotfiles are managed with Git. dotf does not interfere with this
+    operation.
+
+      $ cd ~/.files/vim
+      $ git commit .vimrc
+      $ git push
+
+    It is important to push your changes after committing them to be able
+    to use them on your other system/accounts.
+
+ Example 5 Add a new file to be managed by dotf
+
+    This example shows how to start managing ~/.vimrc with dotf. You either
+    need a new repository are use an existing one. To create a new one
+    please see modules.ini.
+
+      $ cd ~/.files/vim/
+      $ mv ~/.vimrc ./
+      $ git add .vimrc
+      $ git commit -m 'initial commit of .vimrc' .vimrc
+      $ git push
+
+    The file is now in the vim Git repository. The last step is to create
+    the ~/.vimrc symlink which will point to ~/.files/vim/.vimrc. This is
+    done with:
+
+      $ dotf update
+
+ Example 6 Manage your own home directory for a shared account
+
+    This example shows you how to bootstrap and manage your own home
+    directory and use your preferred shell for a shared account with dotf
+    and sshss.
+
+  Create your own home directory
+
+    We create a directory called .ryah under the home directory of the
+    shared account. We will configure this as our own home directory and
+    manage it with dotf.
+
+      $ cd ~
+      $ mkdir .ryah
+      $ cd .ryah
+      $ export HOME=$PWD
+
+  Install cpanm and local::lib
+
+    This will install them to the perl5 directory of your own home
+    directory defined above.
+
+      $ unset PERL5LIB
+      $ unset PERL_MB_OPT
+      $ unset PERL_LOCAL_LIB_ROOT
+      $ unset PERL_MM_OPT
+      $ curl -L https://cpanmin.us | perl - App::cpanminus -l $HOME/perl5 local::lib
+
+  Prepare environment to install dotf
+
+    The following command must also be added to your profile.
+
+      $ eval "$(perl -I $HOME/perl5/lib/perl5 -Mlocal::lib)"
+
+  Install dotf
+
+      $ cpanm https://github.com/skirmess/App-Dotfiles.git
+
+  Initialize dotf
+
+    The -h option is not needed because $HOME was changed above.
+
+      $ dotf init https://github.com/YOUR_ID/dotfiles-config-smartos.git
+
+  Add sshss to modules.ini
+
+    The ~ points to the personal home because $HOME was changed above.
+
+      $ vi ~/.files/.config/modules.ini
+
+    Add sshss as module.
+
+      [sshss]
+      pull = https://github.com/skirmess/App-SSH-SwitchShell.git
+      source path prefix = bin
+      target path prefix = .ssh
+
+  Update dotfiles
+
+    Create the .ssh directory. We want dotf to only link the sshss script
+    to the .ssh directory and not the whole directory.
+
+      $ mkdir ~/.ssh
+      $ dotf update
+
+  Add entry to .ssh/authorized_keys in the shared accounts home directory
+
+    This must be added to the authorized_keys file of the shared account
+    because sshss only changes your home directory and shell after the
+    session is authenticated.
+
+      $ vi ~/../.ssh/authorized_keys
+
+    Add in front of your key:
+
+      command=".ryah/.ssh/sshss /usr/bin/ksh93"
+
+  Verify that you can login before closing your session
+
+    Otherwise remove the command string again. Do not lock yourself out!
+
+ENVIRONMENT
+
+    HOME
+
+      On UNIX used by File::HomeDir as primary method to identify your home
+      directory.
+
+      The home directory is where dotf places the .files directory which
+      contains all the managed dotfiles.
+
+RATIONALE
+
+ Why another dotfiles manager?
+
+    Implemented in Perl, Ksh or Bash
+
+      I don't want to compile or install an obscure compiler or virtual
+      machine on every system I'd like to use my dotfiles manager. Perl is
+      most likely available on everything I'm interested in.
+
+    Support for multiple configuration repositories
+
+      I'd like to have my Vim configuration readily available on github,
+      but the .profile file from my workplace should only be available on
+      the Git server at my workplace.
+
+    The configuration which dotfiles are installed on which system should
+    also be under version control
+
+      And changes to this configuration should automatically show up with
+      an update. That's why we have the .config repository with the
+      modules.ini file.
+
+    I don't want the dotfiles manager to completely shield me from Git
+
+      Git has a very powerful command line interface and you can find a
+      huge amount of documentation on the Web. I don't want a dotfiles
+      manager try to handle Git operations like merging, conflict
+      resolution, etc. If there is a conflict to be resolved or a new file
+      to be committed it should be done with Git directly. The dotfiles
+      manager should only be a collection of convenient functions to make
+      it easy to update changes on multiple system.
+
+    I was unable to find an existing dotfile manager that fulfilled these
+    four requirements.
+
+SEE ALSO
+
+    modules.ini
+
+AUTHOR
+
+    Sven Kirmess <sven.kirmess@kzone.ch>
+
+COPYRIGHT AND LICENSE
+
+    This software is Copyright (c) 2017-2018 by Sven Kirmess.
+
+    This is free software, licensed under:
+
+      The (two-clause) FreeBSD License
+

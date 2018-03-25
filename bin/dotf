@@ -4,6 +4,8 @@ use 5.006;
 use strict;
 use warnings;
 
+our $VERSION = '0.001';
+
 use Pod::Usage;
 use Safe::Isa;
 use Try::Tiny;
@@ -254,6 +256,8 @@ The B<-h> option is not needed because B<$HOME> was changed above.
 The B<~> points to the personal home because B<$HOME> was changed above.
 
   $ vi ~/.files/.config/modules.ini
+
+Add sshss as module.
 
   [sshss]
   pull = https://github.com/skirmess/App-SSH-SwitchShell.git
