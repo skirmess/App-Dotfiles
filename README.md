@@ -2,6 +2,10 @@
 
 dotf - dotfiles manager
 
+# VERSION
+
+Version 0.001
+
 # SYNOPSIS
 
 - **dotf** \[**-h** &lt;homedir>\] **help**
@@ -255,6 +259,23 @@ requirements.
 # SEE ALSO
 
 [modules.ini](https://metacpan.org/pod/modules.ini)
+
+# SUPPORT
+
+## Bugs / Feature Requests
+
+Please report any bugs or feature requests through the issue tracker
+at [https://github.com/skirmess/App-Dotfiles/issues](https://github.com/skirmess/App-Dotfiles/issues).
+You will be notified automatically of any progress on your issue.
+
+## Source Code
+
+This is open source software. The code repository is available for
+public review and contribution under the terms of the license.
+
+[https://github.com/skirmess/App-Dotfiles](https://github.com/skirmess/App-Dotfiles)
+
+    git clone https://github.com/skirmess/App-Dotfiles.git
 
 # AUTHOR
 
