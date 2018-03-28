@@ -37,7 +37,7 @@ The B<target path prefix> path is prepended to every file when it is linked to t
 home directory. This allows us to install modules to subdirectories of the
 home directory without replicating the structure in the module which is
 useful if you're using someone else's repository where you have no influence
-on how the files are stored. See L<Example 1> below for an example using
+on how the files are stored. See Example 1 below for an example using
 F<vim-airline>.
 
 =head1 EXAMPLES
