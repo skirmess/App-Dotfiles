@@ -36,6 +36,7 @@ on test => sub {
 };
 
 on develop => sub {
+    requires 'CPANPLUS';
     requires 'FindBin';
     requires 'Perl::Critic', '1.130';
     requires 'Perl::Critic::Policy::Bangs::ProhibitBitwiseOperators', '1.12';
@@ -134,6 +135,8 @@ on develop => sub {
     requires 'Test::Perl::Critic';
     requires 'Test::PerlTidy';
     requires 'Test::Pod', '1.26';
+    requires 'Test::Pod::LinkCheck';
     requires 'Test::Spelling', '0.12';
     requires 'Test::Version', '0.04';
+    requires 'lib';
 };
