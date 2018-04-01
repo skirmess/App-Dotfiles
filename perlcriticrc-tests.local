@@ -1,8 +1,6 @@
 [-Bangs::ProhibitNumberedNames]
 [-Modules::RequireExplicitInclusion]
 [-NamingConventions::Capitalization]
-[-Subroutines::ProhibitExcessComplexity]
-[-ValuesAndExpressions::ProhibitMagicNumbers]
 [-ValuesAndExpressions::RequireInterpolationOfMetachars]
 
 [Variables::RequireLocalizedPunctuationVars]

@@ -57,7 +57,7 @@ sub _get_main_options_and_command {
 
         '<>' => sub {
             ($command) = @_;
-            die '!FINISH';
+            die '!FINISH';    ## no critic (ErrorHandling::RequireCarping)
         },
     ) or App::Dotfiles::Error::E_USAGE->throw('usage error in global option section');
 

@@ -1,4 +1,3 @@
 [-ControlStructures::ProhibitPostfixControls]
-[-ErrorHandling::RequireCarping]
 [-Modules::RequireExplicitInclusion]
 [-Subroutines::ProhibitExcessComplexity]
