@@ -7,6 +7,15 @@ use warnings;
 our $VERSION = '0.001';
 
 use Moo;
+with 'App::Dotfiles::Role::Runtime';
+
+use App::Dotfiles::Error;
+
+use Carp;
+use File::Copy;
+use Path::Tiny;
+
+use namespace::clean;
 
 has _dirs => (
     is       => 'ro',
@@ -19,16 +28,6 @@ has _links => (
     init_arg => undef,
     default  => sub { {} },
 );
-
-with 'App::Dotfiles::Role::Runtime';
-
-use App::Dotfiles::Error;
-
-use Carp;
-use File::Copy;
-use Path::Tiny;
-
-use namespace::clean;
 
 sub plan_module {
     my ( $self, $module ) = @_;

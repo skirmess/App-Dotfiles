@@ -6,31 +6,37 @@ use warnings;
 
 our $VERSION = '0.001';
 
-use Config::Std;
+use Moo;
 
 use App::Dotfiles::Module;
 use App::Dotfiles::Error;
 
-use Moo;
+use Config::Std;
+
+use Path::Tiny;
+
+use namespace::clean;
+
 has name => (
     is       => 'lazy',
     init_arg => undef,
 );
+
 has _verify_remotes_before_update => (
     is       => 'ro',
     default  => 0,
     init_arg => undef,
 );
-with 'App::Dotfiles::Role::Runtime', 'App::Dotfiles::Role::Repository';
 
 has modules_config_file_path => (
     is       => 'lazy',
     init_arg => undef,
 );
 
-use Path::Tiny;
-
-use namespace::clean;
+with qw(
+  App::Dotfiles::Role::Runtime
+  App::Dotfiles::Role::Repository
+);
 
 sub get_modules {
     my ($self) = @_;

@@ -6,25 +6,29 @@ use warnings;
 
 our $VERSION = '0.001';
 
-use File::Spec;
-use Git::Wrapper;
+use Moo;
 
 use App::Dotfiles::Error;
 
-use Moo;
+use File::Spec;
+use Git::Wrapper;
+
 use namespace::clean;
 
 has config_dir => (
     is      => 'ro',
     default => '.config',
 );
+
 has dotfiles_path => (
     is => 'lazy',
 );
+
 has home_path => (
     is       => 'ro',
     required => 1,
 );
+
 has modules_config_file => (
     is      => 'ro',
     default => 'modules.ini',

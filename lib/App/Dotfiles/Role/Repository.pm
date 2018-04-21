@@ -6,13 +6,14 @@ use warnings;
 
 our $VERSION = '0.001';
 
+use Moo::Role;
+
+use App::Dotfiles::Error;
+
 use File::Spec;
 use Git::Wrapper;
 use Try::Tiny;
 
-use App::Dotfiles::Error;
-
-use Moo::Role;
 use namespace::clean;
 
 requires 'name';
@@ -22,13 +23,16 @@ has git => (
     is       => 'lazy',
     init_arg => undef,
 );
+
 has module_path => (
     is       => 'lazy',
     init_arg => undef,
 );
+
 has pull_url => (
     is => 'ro',
 );
+
 has push_url => (
     is => 'ro',
 );

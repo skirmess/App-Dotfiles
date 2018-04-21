@@ -6,14 +6,15 @@ use warnings;
 
 our $VERSION = '0.001';
 
-use File::HomeDir qw(my_home);
-use Getopt::Long;
+use Moo;
 
 use App::Dotfiles::CLI::Command;
 use App::Dotfiles::Error;
 use App::Dotfiles::Runtime;
 
-use Moo;
+use File::HomeDir qw(my_home);
+use Getopt::Long;
+
 use namespace::clean;
 
 has runtime => (

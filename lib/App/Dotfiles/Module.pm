@@ -11,6 +11,8 @@ use Moo;
 use App::Dotfiles::Error;
 use Path::Tiny;
 
+use namespace::clean;
+
 has name => (
     is       => 'ro',
     required => 1,
@@ -32,9 +34,10 @@ has _verify_remotes_before_update => (
     init_arg => undef,
 );
 
-with 'App::Dotfiles::Role::Runtime', 'App::Dotfiles::Role::Repository';
-
-use namespace::clean;
+with qw(
+  App::Dotfiles::Role::Runtime
+  App::Dotfiles::Role::Repository
+);
 
 sub get_linkables {
     my ( $self, $path ) = @_;
