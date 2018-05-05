@@ -8,7 +8,7 @@ requires 'Git::Wrapper';
 requires 'Moo';
 requires 'Moo::Role';
 requires 'Path::Tiny';
-requires 'Pod::Usage';
+requires 'Pod::Usage', '1.69';
 requires 'Safe::Isa';
 requires 'Try::Tiny';
 requires 'custom::failures';

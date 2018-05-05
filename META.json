@@ -38,7 +38,7 @@
             "Moo" : "0",
             "Moo::Role" : "0",
             "Path::Tiny" : "0",
-            "Pod::Usage" : "0",
+            "Pod::Usage" : "1.69",
             "Safe::Isa" : "0",
             "Try::Tiny" : "0",
             "custom::failures" : "0",

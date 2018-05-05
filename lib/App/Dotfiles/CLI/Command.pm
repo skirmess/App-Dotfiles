@@ -6,7 +6,7 @@ use warnings;
 
 our $VERSION = '0.001';
 
-use Pod::Usage;
+use Pod::Usage 1.69;
 use Safe::Isa;
 use Try::Tiny;
 
