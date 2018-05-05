@@ -1,7 +1,7 @@
 requires 'Carp';
 requires 'Config::Std';
 requires 'File::Copy';
-requires 'File::HomeDir';
+requires 'File::HomeDir::Tiny';
 requires 'File::Spec';
 requires 'Getopt::Long';
 requires 'Git::Wrapper';

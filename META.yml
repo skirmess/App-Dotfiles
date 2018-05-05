@@ -61,7 +61,7 @@ requires:
   Carp: '0'
   Config::Std: '0'
   File::Copy: '0'
-  File::HomeDir: '0'
+  File::HomeDir::Tiny: '0'
   File::Spec: '0'
   Getopt::Long: '0'
   Git::Wrapper: '0'
