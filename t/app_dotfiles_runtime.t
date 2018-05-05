@@ -3,13 +3,13 @@
 use 5.006;
 use strict;
 use warnings;
-use autodie;
 
 use Test::Fatal;
 use Test::More;
 use Test::TempDir::Tiny;
 
 use File::Spec;
+use Path::Tiny;
 
 use App::Dotfiles::Runtime;
 
@@ -28,14 +28,21 @@ sub main {
     like( exception { App::Dotfiles::Runtime->new( home_path => $home ) }, "/ \QHome directory '$home' does not exist\E /xsm", 'new() throws an exception if the home directory does not exist' );
 
     note('home directory is not a directory');
-    open my $fh, '>', File::Spec->catfile($home);
-    close $fh;
+    _touch( File::Spec->catfile($home) );
     like( exception { App::Dotfiles::Runtime->new( home_path => $home ) }, "/ \QHome directory '$home' is not a directory\E /xsm", 'new() throws an exception if the home directory is not a directory' );
 
     done_testing();
 
     exit 0;
 
+}
+
+sub _touch {
+    my ( $file, @content ) = @_;
+
+    path($file)->spew(@content) or BAIL_OUT("Cannot write file '$file': $!");
+
+    return;
 }
 
 # vim: ts=4 sts=4 sw=4 et: syntax=perl

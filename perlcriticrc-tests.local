@@ -1,6 +1,11 @@
 [-Bangs::ProhibitNumberedNames]
+
+[ControlStructures::ProhibitPostfixControls]
+flowcontrol = BAIL_OUT
+
 [-Modules::RequireExplicitInclusion]
 [-NamingConventions::Capitalization]
+[-Subroutines::RequireArgUnpacking]
 [-ValuesAndExpressions::RequireInterpolationOfMetachars]
 
 [Variables::RequireLocalizedPunctuationVars]

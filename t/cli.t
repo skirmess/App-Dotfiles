@@ -3,7 +3,6 @@
 use 5.006;
 use strict;
 use warnings;
-use autodie;
 
 use Test::Fatal;
 
@@ -14,6 +13,8 @@ use File::Path qw(make_path);
 use File::Spec;
 
 use Git::Wrapper;
+
+use Path::Tiny;
 
 use Capture::Tiny qw(capture);
 
@@ -323,8 +324,7 @@ sub main {
         my $config_repo = Git::Wrapper->new($config_repo_path);
         $config_repo->init('-q');
 
-        open my $fh, '>', File::Spec->catfile( $config_repo_path, 'modules.ini' );
-        close $fh;
+        _touch( File::Spec->catfile( $config_repo_path, 'modules.ini' ) );
 
         $config_repo->add('modules.ini');
 
@@ -386,6 +386,14 @@ sub main {
     done_testing();
 
     exit 0;
+}
+
+sub _touch {
+    my ( $file, @content ) = @_;
+
+    path($file)->spew(@content) or BAIL_OUT("Cannot write file '$file': $!");
+
+    return;
 }
 
 # vim: ts=4 sts=4 sw=4 et: syntax=perl

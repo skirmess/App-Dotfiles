@@ -29,8 +29,7 @@ on test => sub {
     requires 'Test::Fatal';
     requires 'Test::More';
     requires 'Test::Script', '1.09';
-    requires 'Test::TempDir::Tiny';
-    requires 'autodie';
+    requires 'Test::TempDir::Tiny', '0.017';
     requires 'lib';
     requires 'perl', '5.006';
 };

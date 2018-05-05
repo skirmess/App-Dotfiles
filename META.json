@@ -56,8 +56,7 @@
             "Test::Fatal" : "0",
             "Test::More" : "0",
             "Test::Script" : "1.09",
-            "Test::TempDir::Tiny" : "0",
-            "autodie" : "0",
+            "Test::TempDir::Tiny" : "0.017",
             "lib" : "0",
             "perl" : "5.006"
          }

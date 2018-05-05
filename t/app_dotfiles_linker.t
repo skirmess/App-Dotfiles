@@ -3,7 +3,6 @@
 use 5.006;
 use strict;
 use warnings;
-use autodie;
 
 use Path::Tiny;
 
@@ -50,24 +49,24 @@ sub main {
     is( $linker->plan_module($mod1), undef, q{'plan_module' returns undef} );
     like( exception { $linker->_create_actions() }, "/ \QLinking module 'mod1' would cause conflicts: link target '\E .* \Q' is a file but link source '\E .* \Q' is not\E /xsm", q{'_create_actions' throws an exception on conflict} );
 
-    unlink $home->child('mod1T');
+    _unlink( $home->child('mod1T') );
 
     #
     note('link target blocked by foreign link');
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
 
-    symlink tempdir(), $home->child('mod1T');
+    _symlink( tempdir(), $home->child('mod1T') );
 
     is( $linker->plan_module($mod1), undef, q{'plan_module' returns undef} );
     like( exception { $linker->_create_actions() }, "/ \QLinking module 'mod1' would cause conflicts: link target '\E .* \Q' is a symlink that is not managed by us\E /xsm", q{'_create_actions' throws an exception on conflict} );
 
-    unlink $home->child('mod1T');
+    _unlink( $home->child('mod1T') );
 
     #
     note('link target blocked by our link');
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
 
-    symlink $mod1_path, $home->child('mod1T');
+    _symlink( $mod1_path, $home->child('mod1T') );
 
     is( $linker->plan_module($mod1), undef, q{'plan_module' returns undef} );
     $actions = $linker->_create_actions();
@@ -85,13 +84,13 @@ sub main {
     isa_ok( $action[2], 'App::Dotfiles::Module' );
     is( $action[2]->name, 'mod1', '... correct module' );
 
-    unlink $home->child('mod1T');
+    _unlink( $home->child('mod1T') );
 
     #
     note('link target blocked by our dead link');
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
 
-    symlink $mod1_path->child('a/b c/d'), $home->child('mod1T');
+    _symlink( $mod1_path->child('a/b c/d'), $home->child('mod1T') );
 
     is( $linker->plan_module($mod1), undef, q{'plan_module' returns undef} );
     $actions = $linker->_create_actions();
@@ -109,20 +108,20 @@ sub main {
     isa_ok( $action[2], 'App::Dotfiles::Module' );
     is( $action[2]->name, 'mod1', '... correct module' );
 
-    unlink $home->child('mod1T');
+    _unlink( $home->child('mod1T') );
 
     #
     note('correct link exists already');
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
 
-    symlink path('.files/mod1'), $home->child('mod1T');
+    _symlink( path('.files/mod1'), $home->child('mod1T') );
 
     is( $linker->plan_module($mod1), undef, q{'plan_module' returns undef} );
     $actions = $linker->_create_actions();
 
     is( @{$actions}, 0, 'generated zero actions' );
 
-    unlink $home->child('mod1T');
+    _unlink( $home->child('mod1T') );
 
     #
     note('link target is a directory');
@@ -141,7 +140,7 @@ sub main {
     isa_ok( $action[2], 'App::Dotfiles::Module' );
     is( $action[2]->name, 'mod1', '... correct module' );
 
-    rmdir $home->child('mod1T');
+    _rmdir( $home->child('mod1T') );
 
     #
     note('check the sanity check');
@@ -340,20 +339,20 @@ sub main {
         $mod_path[$i]->mkpath();
     }
 
-    symlink tempdir(), $home->child('target');
+    _symlink( tempdir(), $home->child('target') );
 
     is( $linker->plan_module( $mod[0] ), undef, q{'plan_module' returns undef} );
     is( $linker->plan_module( $mod[1] ), undef, q{'plan_module' returns undef} );
 
     like( exception { $linker->_create_actions() }, "/ \QLinking module 'module1' would cause conflicts: link target '\E .* \Q' is a symlink that is not managed by us\E /xsm", q{'_create_actions' throws an exception on conflict} );
 
-    unlink $home->child('target');
+    _unlink( $home->child('target') );
 
     #
     note('dir target blocked by our link');
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
 
-    symlink $mod_path[0], $home->child('target');
+    _symlink( $mod_path[0], $home->child('target') );
 
     is( $linker->plan_module( $mod[0] ), undef, q{'plan_module' returns undef} );
     is( $linker->plan_module( $mod[1] ), undef, q{'plan_module' returns undef} );
@@ -373,7 +372,7 @@ sub main {
     is( $action[0], 'target/T', 'correct target' );
     is( $action[1], 'mkdir',    '... action' );
 
-    unlink $home->child('target');
+    _unlink( $home->child('target') );
 
     #
     note('fitting run restart');
@@ -488,16 +487,16 @@ sub main {
         is( readlink( $home->child('.kshrc') ), '.files/profile/ksh93/.kshrc', '... pointing to the correct file' );
 
         if ( $i eq 'second' ) {
-            unlink $home->child('.vimrc');
+            _unlink( $home->child('.vimrc') );
         }
 
         if ( $i eq 'third' ) {
-            unlink $home->child('.vimrc');
-            symlink $mod_path[1], $home->child('.vimrc');
+            _unlink( $home->child('.vimrc') );
+            _symlink( $mod_path[1], $home->child('.vimrc') );
         }
 
         if ( $i eq 'fourth' ) {
-            unlink $home->child('.vimrc');
+            _unlink( $home->child('.vimrc') );
             $home->child('.vimrc')->spew('hello world');
         }
     }
@@ -510,7 +509,7 @@ sub main {
     my $tmpdir = path( tempdir() )->child('home');
     $home = path( tempdir() )->child('HOME');
     $tmpdir->mkpath();
-    symlink $tmpdir, $home;
+    _symlink( $tmpdir, $home );
 
     $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
@@ -535,6 +534,30 @@ sub main {
     done_testing();
 
     exit 0;
+}
+
+sub _rmdir {
+    my ($dir) = @_;
+
+    my $rc = rmdir $dir;
+    BAIL_OUT("rmdir $dir: $!") if !$rc;
+    return $rc;
+}
+
+sub _symlink {
+    my ( $old_name, $new_name ) = @_;
+
+    my $rc = symlink $old_name, $new_name;
+    BAIL_OUT("symlink $old_name, $new_name: $!") if !$rc;
+    return $rc;
+}
+
+sub _unlink {
+    my (@files) = @_;
+
+    my $rc = unlink @files;
+    BAIL_OUT("unlink @files: $!") if !$rc;
+    return $rc;
 }
 
 # vim: ts=4 sts=4 sw=4 et: syntax=perl

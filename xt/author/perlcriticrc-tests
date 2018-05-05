@@ -41,7 +41,10 @@ verbose = [%p] %m at %f line %l, near '%r'\n
 [ControlStructures::ProhibitLabelsWithSpecialBlockNames]
 [ControlStructures::ProhibitMutatingListFunctions]
 [ControlStructures::ProhibitNegativeExpressionsInUnlessAndUntilConditions]
+
 [ControlStructures::ProhibitPostfixControls]
+flowcontrol = BAIL_OUT
+
 [ControlStructures::ProhibitUnlessBlocks]
 [ControlStructures::ProhibitUnreachableCode]
 [ControlStructures::ProhibitUntilBlocks]
@@ -122,7 +125,7 @@ modules = Class::ISA {Found use of Class::ISA. This module is deprecated by the 
 private_name_regex = _(?!build_)\w+
 
 [Subroutines::ProtectPrivateSubs]
-[Subroutines::RequireArgUnpacking]
+#[Subroutines::RequireArgUnpacking]
 [Subroutines::RequireFinalReturn]
 [TestingAndDebugging::ProhibitNoStrict]
 [TestingAndDebugging::ProhibitNoWarnings]

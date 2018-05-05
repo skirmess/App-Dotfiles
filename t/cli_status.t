@@ -3,7 +3,6 @@
 use 5.006;
 use strict;
 use warnings;
-use autodie;
 
 use Carp;
 
@@ -15,6 +14,7 @@ use File::Path qw(make_path);
 use File::Spec;
 
 use Git::Wrapper;
+use Path::Tiny;
 
 use Capture::Tiny qw(capture);
 
@@ -22,13 +22,6 @@ use App::Dotfiles::Runtime;
 use App::Dotfiles::CLI::Command;
 
 main();
-
-sub _print {
-    my ( $fh, @args ) = @_;
-
-    print {$fh} @args or croak qq{$!};
-    return;
-}
 
 sub main {
     my $home = tempdir();
@@ -82,8 +75,7 @@ sub main {
     #
     note('add config file');
     my $config_file = File::Spec->catfile( $home, '.files', '.config', 'modules.ini' );
-    open my $fh, '>', $config_file;
-    close $fh;
+    _touch($config_file);
 
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_status() };
@@ -110,9 +102,10 @@ sub main {
 
     #
     note('add additional module to config file');
-    open $fh, '>', $config_file;
-    _print( $fh, "[additional_module_1]\npull=http://www.example.net/test.git\n" );
-    close $fh;
+    _touch( $config_file, <<'EOF');
+[additional_module_1]
+pull=http://www.example.net/test.git
+EOF
 
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_status() };
@@ -127,9 +120,10 @@ sub main {
 
     #
     note('mention another module in config file');
-    open $fh, '>', $config_file;
-    _print( $fh, "[additional_module_2]\npull=http://www.example.net/test.git\n" );
-    close $fh;
+    _touch( $config_file, <<'EOF');
+[additional_module_2]
+pull=http://www.example.net/test.git
+EOF
 
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_status() };
@@ -163,8 +157,7 @@ sub main {
 
     #
     note('add changes to module2');
-    open $fh, '>', File::Spec->catfile( $module2_path, 'a.txt' );
-    close $fh;
+    _touch( File::Spec->catfile( $module2_path, 'a.txt' ) );
 
     {
         my ( $stdout, $stderr, @result ) = capture { $obj->run_status() };
@@ -197,6 +190,14 @@ sub main {
     done_testing();
 
     exit 0;
+}
+
+sub _touch {
+    my ( $file, @content ) = @_;
+
+    path($file)->spew(@content) or BAIL_OUT("Cannot write file '$file': $!");
+
+    return;
 }
 
 # vim: ts=4 sts=4 sw=4 et: syntax=perl

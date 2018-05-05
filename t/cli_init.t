@@ -3,7 +3,6 @@
 use 5.006;
 use strict;
 use warnings;
-use autodie;
 
 use Test::More;
 use Test::Fatal;
@@ -13,6 +12,8 @@ use File::Spec;
 use File::Path qw(make_path);
 
 use Git::Wrapper;
+
+use Path::Tiny;
 
 use Capture::Tiny qw(capture);
 
@@ -67,8 +68,7 @@ sub main {
     $git = Git::Wrapper->new($remote_config);
     $git->init('-q');
 
-    open my $fh, '>', File::Spec->catfile( $remote_config, 'test.txt' );
-    close $fh;
+    _touch( File::Spec->catfile( $remote_config, 'test.txt' ) );
     $git->config( 'user.email', 'test@example.net' );
     $git->config( 'user.name',  'Test User' );
     $git->add('test.txt');
@@ -113,11 +113,9 @@ sub main {
     my $repo1 = tempdir();
     my $git1  = Git::Wrapper->new($repo1);
     $git1->init('-q');
-    open $fh, '>', File::Spec->catfile( $repo1, 'file1.txt' );
-    close $fh;
+    _touch( File::Spec->catfile( $repo1, 'file1.txt' ) );
     make_path( File::Spec->catfile( $repo1, 'dir1' ) );
-    open $fh, '>', File::Spec->catfile( $repo1, 'dir1', 'file1a.txt' );
-    close $fh;
+    _touch( File::Spec->catfile( $repo1, 'dir1', 'file1a.txt' ) );
     $git1->config( 'user.email', 'test@example.net' );
     $git1->config( 'user.name',  'Test User' );
     $git1->add( 'file1.txt', 'dir1' );
@@ -126,25 +124,21 @@ sub main {
     my $repo2 = tempdir();
     my $git2  = Git::Wrapper->new($repo2);
     $git2->init('-q');
-    open $fh, '>', File::Spec->catfile( $repo2, 'file2.txt' );
-    close $fh;
+    _touch( File::Spec->catfile( $repo2, 'file2.txt' ) );
     make_path( File::Spec->catfile( $repo2, 'dir2' ) );
-    open $fh, '>', File::Spec->catfile( $repo2, 'dir2', 'file2a.txt' );
-    close $fh;
+    _touch( File::Spec->catfile( $repo2, 'dir2', 'file2a.txt' ) );
     $git2->config( 'user.email', 'test@example.net' );
     $git2->config( 'user.name',  'Test User' );
     $git2->add( 'file2.txt', 'dir2' );
     $git2->commit( '-q', '-m', 'test' );
 
-    open $fh, '>', File::Spec->catfile( $remote_config, 'modules.ini' );
-    print {$fh} <<"EOF";
+    _touch( File::Spec->catfile( $remote_config, 'modules.ini' ), <<"EOF");
 [module1]
 pull=$repo1
 
 [module 2]
 pull = $repo2
 EOF
-    close $fh;
     $git->add('modules.ini');
     $git->commit( '-q', '-m', 'test' );
 
@@ -203,6 +197,14 @@ EOF
     done_testing();
 
     exit 0;
+}
+
+sub _touch {
+    my ( $file, @content ) = @_;
+
+    path($file)->spew(@content) or BAIL_OUT("Cannot write file '$file': $!");
+
+    return;
 }
 
 # vim: ts=4 sts=4 sw=4 et: syntax=perl

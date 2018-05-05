@@ -3,7 +3,6 @@
 use 5.006;
 use strict;
 use warnings;
-use autodie;
 
 use Path::Tiny;
 
@@ -64,7 +63,7 @@ sub main {
 
     # dir1 and link1
     $test_ws->child('dir1')->mkpath();
-    symlink $test_ws->child('dir1')->realpath(), $test_ws->child('link1')->realpath();
+    _symlink( $test_ws->child('dir1')->realpath(), $test_ws->child('link1')->realpath() );
     $exception = exception { $obj->get_linkables('test.txt') };
     isa_ok( $exception, 'App::Dotfiles::Error', 'get_linkables() throws an exception when run on a symlink' );
     like( $exception, "/ \QNot a directory: $test_ws\E /xsm", '... with correct message' );
@@ -97,7 +96,7 @@ sub main {
 
     # source_path_prefix on a dir with perm 000
     $test_ws->child('dir2')->mkpath();
-    chmod 0000, $test_ws->child('dir2');
+    _chmod( 0000, $test_ws->child('dir2') );
 
     $obj = new_ok( $class, [ runtime => $runtime, name => $name, source_path_prefix => 'dir2' ] );
     $exception = exception { $obj->get_linkables(q{.}) };
@@ -109,6 +108,20 @@ sub main {
     done_testing();
 
     exit 0;
+}
+
+sub _chmod {
+    my $rc = chmod @_;
+    BAIL_OUT("chmod @_: $!") if !$rc;
+    return $rc;
+}
+
+sub _symlink {
+    my ( $old_name, $new_name ) = @_;
+
+    my $rc = symlink $old_name, $new_name;
+    BAIL_OUT("symlink $old_name, $new_name: $!") if !$rc;
+    return $rc;
 }
 
 # vim: ts=4 sts=4 sw=4 et: syntax=perl

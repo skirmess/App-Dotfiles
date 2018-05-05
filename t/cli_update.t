@@ -3,7 +3,6 @@
 use 5.006;
 use strict;
 use warnings;
-use autodie;
 
 use Carp;
 
@@ -16,19 +15,14 @@ use File::Path qw(make_path);
 
 use Git::Wrapper;
 
+use Path::Tiny;
+
 use Capture::Tiny qw(capture);
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::CLI::Command;
 
 main();
-
-sub _print {
-    my ( $fh, @args ) = @_;
-
-    print {$fh} @args or croak qq{$!};
-    return;
-}
 
 sub main {
     my $home = tempdir();
@@ -88,8 +82,7 @@ sub main {
 
     $git->config( 'user.email', 'test@example.net' );
     $git->config( 'user.name',  'Test User' );
-    open my $fh, '>', File::Spec->catfile( $config_path, 'test.txt' );
-    close $fh;
+    _touch( File::Spec->catfile( $config_path, 'test.txt' ) );
     $git->add('test.txt');
     $git->commit( '-q', '-m', 'test' );
     $git->remote( 'add', 'origin', "$repositories/config.git" );
@@ -107,8 +100,7 @@ sub main {
 
     #
     note('with a modules.ini file');
-    open $fh, '>', File::Spec->catfile( $config_path, 'modules.ini' );
-    close $fh;
+    _touch( File::Spec->catfile( $config_path, 'modules.ini' ) );
     $git->add( File::Spec->catfile( $config_path, 'modules.ini' ) );
     $git->commit( '-q', '-m', 'test' );
 
@@ -136,8 +128,7 @@ sub main {
     make_path("${test1_repo}.workspace");
     $git_remote = Git::Wrapper->new("${test1_repo}.workspace");
     $git_remote->init('-q');
-    open $fh, '>', File::Spec->catfile( "${test1_repo}.workspace", 'test.txt' );
-    close $fh;
+    _touch( File::Spec->catfile( "${test1_repo}.workspace", 'test.txt' ) );
     $git_remote->config( 'user.email', 'test@example.net' );
     $git_remote->config( 'user.name',  'Test User' );
     $git_remote->add('test.txt');
@@ -145,10 +136,11 @@ sub main {
     $git_remote->remote( 'add', 'origin', $test1_repo );
     $git_remote->push( '-q', '--set-upstream', 'origin', 'master' );
 
-    open $fh, '>', File::Spec->catfile( $config_path, 'modules.ini' );
-    _print( $fh, "[test1]\n" );
-    _print( $fh, "pull=$test1_repo\n" );
-    close $fh;
+    _touch(
+        File::Spec->catfile( $config_path, 'modules.ini' ),
+        "[test1]\n",
+        "pull=$test1_repo\n",
+    );
 
     $git->commit( '-q', '-a', '-m', 'test' );
 
@@ -189,6 +181,14 @@ sub main {
     done_testing();
 
     exit 0;
+}
+
+sub _touch {
+    my ( $file, @content ) = @_;
+
+    path($file)->spew(@content) or BAIL_OUT("Cannot write file '$file': $!");
+
+    return;
 }
 
 # vim: ts=4 sts=4 sw=4 et: syntax=perl

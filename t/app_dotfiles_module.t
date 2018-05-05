@@ -3,7 +3,6 @@
 use 5.006;
 use strict;
 use warnings;
-use autodie;
 
 use File::Path qw(make_path);
 use File::Spec;
@@ -13,6 +12,8 @@ use Test::Fatal;
 use Test::TempDir::Tiny;
 
 use Git::Wrapper;
+
+use Path::Tiny;
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Module;
@@ -52,7 +53,7 @@ sub main {
         is( $obj->does_repository_exist(), undef, q{does_repository_exist() returns 'undef' for a non-existing module} );
         make_path( File::Spec->catfile( $test_ws, '.git' ) );
         like( exception { $obj->does_repository_exist(); }, "/ \QDirectory '$test_ws' exists but is not a valid Git directory\E /xsm", '... and throws an error for an existing, but invalid .git directory' );
-        rmdir( File::Spec->catfile( $test_ws, '.git' ) );
+        _rmdir( File::Spec->catfile( $test_ws, '.git' ) );
 
         my $git = Git::Wrapper->new($test_ws);
         $git->init($test_ws);
@@ -90,20 +91,19 @@ sub main {
 
         # Create remote (bare) repository
         my $test_repo = File::Spec->catfile( $repositories, 'test.git' );
-        mkdir "$test_repo";
+        _mkdir($test_repo);
         $git = Git::Wrapper->new($test_repo);
         $git->init( '-q', '--bare' );
 
         # Create repository
         # (We can't test our Git functionality if the remote repository has no commit)
         $test_ws = File::Spec->catfile( $workspaces, 'test' );
-        mkdir "$test_ws";
+        _mkdir($test_ws);
         $git = Git::Wrapper->new($test_ws);
         $git->init('-q');
         $git->config( 'user.email', 'test@example.net' );
         $git->config( 'user.name',  'Test User' );
-        open my $fh, '>', File::Spec->catfile( $test_ws, 'test.txt' );
-        close $fh;
+        _touch( File::Spec->catfile( $test_ws, 'test.txt' ) );
         $git->add('test.txt');
         $git->commit( '-q', '-m', 'test' );
         $git->remote( 'add', 'origin', "$repositories/test.git" );
@@ -124,7 +124,7 @@ sub main {
         my $upstream_repo = "$repositories/test.git";
 
         like( exception { $obj->clone_repository(); }, "/ \QDirectory '$r_path' already exists\E /xsm", q{clone_repository() with 'pull_url' throws an error if the target directory exists already} );
-        rmdir $r_path;
+        _rmdir($r_path);
 
         ok( !-d File::Spec->catfile( $home, '.files', $name ), q{repository 'name' does not exist before cloning it} );
 
@@ -144,17 +144,15 @@ sub main {
         is( $obj->verify_remote(),    undef, '... and configured the remotes correctly' );
 
         # update_repository
-        open $fh, '>', File::Spec->catfile( $home, '.files', $name, 'test2.txt' );
-        close $fh;
+        _touch( File::Spec->catfile( $home, '.files', $name, 'test2.txt' ) );
 
         my $exception = exception { $obj->update_repository() };
         isa_ok( $exception, 'App::Dotfiles::Error::E_REPOSITORY_IS_DIRTY', 'update_repository() throws an error if repository is dirty' );
 
-        unlink File::Spec->catfile( $home, '.files', $name, 'test2.txt' );
+        _unlink( File::Spec->catfile( $home, '.files', $name, 'test2.txt' ) );
 
         # add another file to upstream
-        open $fh, '>', File::Spec->catfile( $test_ws, 'test3.txt' );
-        close $fh;
+        _touch( File::Spec->catfile( $test_ws, 'test3.txt' ) );
         $git->add('test3.txt');
         $git->commit( '-q', '-m', 'test' );
         $git->push('-q');
@@ -175,16 +173,14 @@ sub main {
         is( scalar $obj->get_repository_status(), 0, 'get_repository_status() returns an empty list for clean module' );
 
         my $f1 = File::Spec->catfile( $home, '.files', $name, 'test2.txt' );
-        open $fh, '>', $f1;
-        close $fh;
+        _touch($f1);
 
         my $status_expected_ref = [ [ q{??}, $f1 ], ];
         my @status = $obj->get_repository_status();
         is_deeply( \@status, $status_expected_ref, 'returns correct modifications for dirty module' );
 
         my $f2 = File::Spec->catfile( $home, '.files', $name, 'test4.txt' );
-        open $fh, '>', $f2;
-        close $fh;
+        _touch($f2);
 
         push @{$status_expected_ref}, [ q{??}, $f2 ];
         @status = $obj->get_repository_status();
@@ -195,6 +191,38 @@ sub main {
     done_testing();
 
     exit 0;
+}
+
+sub _mkdir {
+    my ($dir) = @_;
+
+    my $rc = mkdir $dir;
+    BAIL_OUT("mkdir $dir: $!") if !$rc;
+    return $rc;
+}
+
+sub _rmdir {
+    my ($dir) = @_;
+
+    my $rc = rmdir $dir;
+    BAIL_OUT("rmdir $dir: $!") if !$rc;
+    return $rc;
+}
+
+sub _touch {
+    my ( $file, @content ) = @_;
+
+    path($file)->spew(@content) or BAIL_OUT("Cannot write file '$file': $!");
+
+    return;
+}
+
+sub _unlink {
+    my (@files) = @_;
+
+    my $rc = unlink @files;
+    BAIL_OUT("unlink @files: $!") if !$rc;
+    return $rc;
 }
 
 # vim: ts=4 sts=4 sw=4 et: syntax=perl

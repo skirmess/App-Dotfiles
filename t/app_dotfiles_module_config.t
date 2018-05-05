@@ -3,7 +3,6 @@
 use 5.006;
 use strict;
 use warnings;
-use autodie;
 
 use Carp;
 
@@ -19,13 +18,6 @@ use App::Dotfiles::Runtime;
 use App::Dotfiles::Module::Config;
 
 main();
-
-sub _print {
-    my ( $fh, @args ) = @_;
-
-    print {$fh} @args or croak qq{$!};
-    return;
-}
 
 sub main {
     my $home = tempdir();
@@ -45,112 +37,111 @@ sub main {
     note('empty config file');
     make_path( File::Spec->catfile( $home, '.files', '.config' ) );
     my $modules_file = File::Spec->catfile( $home, '.files', '.config', 'modules.ini' );
-    open my $fh, '>', "$modules_file";
-    close $fh;
+    _touch($modules_file);
 
     my @modules = $obj->get_modules();
     is( @modules, 0, '... returns an empty list if there are no modules mentioned in the modules.ini file' );
 
     #
     note('entries in global section in config file');
-    open $fh, '>', "$modules_file";
-    _print( $fh, "pull=http://example.net/test.git\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+pull=http://example.net/test.git
+EOF
 
     like( exception { $obj->get_modules() }, "/ \QError in configuration file '$config_file_path': global section not allowed\E /xsm", '... throws an exception if there are entries in the glonal section' );
 
     #
     note('pull specified multiple times');
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "pull=http://example.net/test.git\n" );
-    _print( $fh, "pull=http://example.net/test.git\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+pull=http://example.net/test.git
+pull=http://example.net/test.git
+EOF
 
     like( exception { $obj->get_modules() }, "/ \Q'pull' url defined multiple times in section '[test]'\E /xsm", '... throws an exception if pull URL is defined multiple times an a section' );
 
     #
     note('push specified multiple times');
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "push=http://example.net/test.git\n" );
-    _print( $fh, "push=http://example.net/test.git\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+push=http://example.net/test.git
+push=http://example.net/test.git
+EOF
 
     like( exception { $obj->get_modules() }, "/ \Q'push' url defined multiple times in section '[test]'\E /xsm", '... throws an exception if push URL is defined multiple times an a section' );
 
     #
     note(q{'target path prefix' specified multiple times});
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "target path prefix = a/b/c\n" );
-    _print( $fh, "target path prefix = a/b/c\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+target path prefix = a/b/c
+target path prefix = a/b/c
+EOF
 
     like( exception { $obj->get_modules() }, "/ \Q'target path prefix' defined multiple times in section '[test]'\E /xsm", q{... throws an exception if 'target path url' is defined multiple times an a section} );
 
     #
     note(q{'source path prefix' specified multiple times});
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "source path prefix = a/b/c\n" );
-    _print( $fh, "source path prefix = a/b/c\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+source path prefix = a/b/c
+source path prefix = a/b/c
+EOF
 
     like( exception { $obj->get_modules() }, "/ \Q'source path prefix' defined multiple times in section '[test]'\E /xsm", q{... throws an exception if 'source path url' is defined multiple times an a section} );
 
     # invalid entry (key w/out value)
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "push=http://example.net/test.git\n" );
-    _print( $fh, "invalid\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+push=http://example.net/test.git
+invalid
+EOF
 
     # error thrown is from Config::Std
     like( exception { $obj->get_modules() }, "/ \QError in config file\E /xsm", '... throws an exception if there is an error in the config file' );
 
     #
     note('invalid entry');
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "push=http://example.net/test.git\n" );
-    _print( $fh, "invalid=entry\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+push=http://example.net/test.git
+invalid=entry
+EOF
 
     like( exception { $obj->get_modules() }, "/ \QInvalid entry 'invalid=entry' in section '[test]'\E /xsm", '... throws an exception if there is an invalid entry' );
 
     # multiple invalid entries
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "push=http://example.net/test.git\n" );
-    _print( $fh, "invalid=entry\n" );
-    _print( $fh, "invalid=entry2\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+push=http://example.net/test.git
+invalid=entry
+invalid=entry2
+EOF
 
     like( exception { $obj->get_modules() }, "/ \QInvalid entry with key 'invalid' in section '[test]'\E /xsm", '... throws an exception if there are multiple invalid entries' );
 
     #
     note('push w/out pull entry');
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "push=http://example.net/test.git\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+push=http://example.net/test.git
+EOF
 
     like( exception { $obj->get_modules() }, "/ \QPull url not defined in section '[test]'\E /xsm", '... throws an exception if there is no pull url' );
 
     # section w/out entries
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+EOF
 
     like( exception { $obj->get_modules() }, "/ \QPull url not defined in section '[test]'\E /xsm", '... throws an exception if there is no pull url' );
 
     #
     note('one module');
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "pull=http://example.net/test.git\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+pull=http://example.net/test.git
+EOF
 
     @modules = $obj->get_modules();
     is( @modules, 1, '... returns a list of one object' );
@@ -159,12 +150,12 @@ sub main {
 
     #
     note('two module');
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "pull=http://example.net/test.git\n" );
-    _print( $fh, "[test2]\n" );
-    _print( $fh, "pull=http://example.net/test2.git\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+pull=http://example.net/test.git
+[test2]
+pull=http://example.net/test2.git
+EOF
 
     @modules = $obj->get_modules();
     is( @modules, 2, '... returns a list of two object' );
@@ -187,20 +178,20 @@ sub main {
 
     #
     note(q{four modules with 'source path prefix' / 'target path prefix'});
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test1]\n" );
-    _print( $fh, "pull=http://example.net/test1.git\n" );
-    _print( $fh, "[test2]\n" );
-    _print( $fh, "pull=http://example.net/test2.git\n" );
-    _print( $fh, "source path prefix=a/b c/d\n" );
-    _print( $fh, "[test3]\n" );
-    _print( $fh, "pull=http://example.net/test3.git\n" );
-    _print( $fh, "target path prefix=x/y/z\n" );
-    _print( $fh, "[test4]\n" );
-    _print( $fh, "pull=http://example.net/test4.git\n" );
-    _print( $fh, "source path prefix=A\n" );
-    _print( $fh, "target path prefix=B\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test1]
+pull=http://example.net/test1.git
+[test2]
+pull=http://example.net/test2.git
+source path prefix=a/b c/d
+[test3]
+pull=http://example.net/test3.git
+target path prefix=x/y/z
+[test4]
+pull=http://example.net/test4.git
+source path prefix=A
+target path prefix=B
+EOF
 
     @modules = $obj->get_modules();
     is( @modules, 4, '... returns a list of four object' );
@@ -239,14 +230,14 @@ sub main {
 
     #
     note('two modules w/ push url');
-    open $fh, '>', "$modules_file";
-    _print( $fh, "[test]\n" );
-    _print( $fh, "pull=http://example.net/test.git\n" );
-    _print( $fh, "push=http://example.net/test3.git\n" );
-    _print( $fh, "[test2]\n" );
-    _print( $fh, "pull=http://example.net/test2.git\n" );
-    _print( $fh, "push=http://example.net/test4.git\n" );
-    close $fh;
+    _touch( $modules_file, <<'EOF');
+[test]
+pull=http://example.net/test.git
+push=http://example.net/test3.git
+[test2]
+pull=http://example.net/test2.git
+push=http://example.net/test4.git
+EOF
 
     @modules = $obj->get_modules();
     is( @modules, 2, '... returns a list of two object' );
@@ -263,6 +254,14 @@ sub main {
     done_testing();
 
     exit 0;
+}
+
+sub _touch {
+    my ( $file, @content ) = @_;
+
+    path($file)->spew(@content) or BAIL_OUT("Cannot write file '$file': $!");
+
+    return;
 }
 
 # vim: ts=4 sts=4 sw=4 et: syntax=perl
