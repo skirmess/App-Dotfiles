@@ -10,6 +10,6 @@ use Test::More 0.88;
 use Test::Kwalitee 'kwalitee_ok';
 
 # Module::CPANTS::Analyse does not find the LICENSE in scripts that don't end in .pl
-kwalitee_ok();
+kwalitee_ok(qw{-has_abstract_in_pod});
 
 done_testing();
