@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 
-use Test::More;
+use Test::More 0.88;
 use Test::Fatal;
 use Test::TempDir::Tiny;
 

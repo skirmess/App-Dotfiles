@@ -5,7 +5,7 @@ use strict;
 use warnings;
 
 use Test::Fatal qw(dies_ok exception);
-use Test::More;
+use Test::More 0.88;
 
 use lib 't/lib';
 

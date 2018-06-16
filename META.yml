@@ -7,7 +7,7 @@ build_requires:
   English: '0'
   File::Path: '0'
   Test::Fatal: '0'
-  Test::More: '0'
+  Test::More: '0.88'
   Test::Script: '1.09'
   Test::TempDir::Tiny: '0.017'
   lib: '0'

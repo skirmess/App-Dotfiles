@@ -7,7 +7,7 @@ use warnings;
 use File::Path qw(make_path);
 use File::Spec;
 
-use Test::More;
+use Test::More 0.88;
 use Test::Fatal;
 use Test::TempDir::Tiny;
 

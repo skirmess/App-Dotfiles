@@ -11,7 +11,7 @@ use File::Spec;
 use Path::Tiny;
 
 use Test::Fatal;
-use Test::More;
+use Test::More 0.88;
 use Test::TempDir::Tiny;
 
 use App::Dotfiles::Runtime;

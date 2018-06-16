@@ -27,7 +27,7 @@ on test => sub {
     requires 'English';
     requires 'File::Path';
     requires 'Test::Fatal';
-    requires 'Test::More';
+    requires 'Test::More', '0.88';
     requires 'Test::Script', '1.09';
     requires 'Test::TempDir::Tiny', '0.017';
     requires 'lib';
@@ -136,6 +136,7 @@ on develop => sub {
     requires 'Test::Pod', '1.26';
     requires 'Test::Pod::LinkCheck';
     requires 'Test::Pod::Links';
+    requires 'Test::RequiredMinimumDependencyVersion';
     requires 'Test::Spelling', '0.12';
     requires 'Test::Version', '0.04';
     requires 'lib';
