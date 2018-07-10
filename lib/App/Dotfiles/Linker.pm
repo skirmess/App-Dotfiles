@@ -154,7 +154,7 @@ sub _create_actions {
 
             # We only have to check for conflicts if there is no action
             # planned for our parents. If there is something planned, it
-            # must be a mkdir, maybe coubled with an unlink, otherwise we
+            # must be a mkdir, maybe coupled with an unlink, otherwise we
             # would have seen a conflict in the planning phase.
 
             my $dir = path($linkable);
