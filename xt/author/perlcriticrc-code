@@ -1,3 +1,2 @@
 [-ControlStructures::ProhibitPostfixControls]
 [-Modules::RequireExplicitInclusion]
-[-Subroutines::ProhibitExcessComplexity]

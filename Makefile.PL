@@ -45,7 +45,7 @@ my %WriteMakefileArgs = (
     "Test::Fatal" => 0,
     "Test::More" => "0.88",
     "Test::Script" => "1.09",
-    "Test::TempDir::Tiny" => "0.017",
+    "Test::TempDir::Tiny" => 0,
     "lib" => 0
   },
   "VERSION" => "0.001",
@@ -74,7 +74,7 @@ my %FallbackPrereqs = (
   "Test::Fatal" => 0,
   "Test::More" => "0.88",
   "Test::Script" => "1.09",
-  "Test::TempDir::Tiny" => "0.017",
+  "Test::TempDir::Tiny" => 0,
   "Try::Tiny" => 0,
   "custom::failures" => 0,
   "lib" => 0,
