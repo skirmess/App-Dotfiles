@@ -20,10 +20,10 @@ sub main {
 
     my $home = tempdir();
 
-    my $name = 'test1';
+    my $name    = 'test1';
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
-    my $obj = new_ok( $class, [ runtime => $runtime, name => $name ] );
+    my $obj   = new_ok( $class, [ runtime => $runtime, name => $name ] );
     my $obj_s = new_ok( $class, [ runtime => $runtime, name => $name, target_path_prefix => path('shift2/.SHIFT 2') ] );
 
     my $test_ws = path( $home, '.files', $name );
@@ -89,7 +89,7 @@ sub main {
     is_deeply( $linkables, $expected, 'source_path_prefix to a dir with a single file' );
 
     # source_path_prefix on file
-    $obj = new_ok( $class, [ runtime => $runtime, name => $name, source_path_prefix => path('dir1/shift1.txt') ] );
+    $obj       = new_ok( $class, [ runtime => $runtime, name => $name, source_path_prefix => path('dir1/shift1.txt') ] );
     $exception = exception { $obj->get_linkables(q{.}) };
     isa_ok( $exception, 'App::Dotfiles::Error', 'get_linkables() throws an exception when run with a source_path_prefix on a file' );
     like( $exception, "/ \QNot a directory: $test_ws\E /xsm", '... with correct message' );
@@ -98,7 +98,7 @@ sub main {
     $test_ws->child('dir2')->mkpath();
     _chmod( 0000, $test_ws->child('dir2') );
 
-    $obj = new_ok( $class, [ runtime => $runtime, name => $name, source_path_prefix => 'dir2' ] );
+    $obj       = new_ok( $class, [ runtime => $runtime, name => $name, source_path_prefix => 'dir2' ] );
     $exception = exception { $obj->get_linkables(q{.}) };
     note($exception);
     isa_ok( $exception, 'App::Dotfiles::Error', 'get_linkables() throws an exception when run with a source_path_prefix on a dir without permissions' );

@@ -16,7 +16,7 @@ use App::Dotfiles::CLI::Command;
 main();
 
 sub main {
-    my $home = tempdir();
+    my $home    = tempdir();
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     my $obj = new_ok( 'App::Dotfiles::CLI::Command', [ runtime => $runtime ] );

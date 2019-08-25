@@ -18,7 +18,7 @@ sub main {
 
     like( exception { $class->new() }, "/ \QMissing required arguments: runtime\E /xsm", q{'runtime' is required with 'new()'} );
 
-    my $home = tempdir();
+    my $home    = tempdir();
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     #

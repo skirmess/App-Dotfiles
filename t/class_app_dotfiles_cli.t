@@ -25,7 +25,7 @@ sub main {
     #
     note('runtime');
 
-    my $home = tempdir();
+    my $home    = tempdir();
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     $obj = new_ok( $class, [ runtime => $runtime ] );

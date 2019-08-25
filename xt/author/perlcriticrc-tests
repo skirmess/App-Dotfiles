@@ -1,5 +1,5 @@
 [ControlStructures::ProhibitPostfixControls]
-flowcontrol = BAIL_OUT
+flowcontrol = BAIL_OUT die
 
 [-Modules::RequireExplicitInclusion]
 [-NamingConventions::Capitalization]

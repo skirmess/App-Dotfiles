@@ -16,7 +16,7 @@ main();
 sub main {
     my $class = 'App::Dotfiles::CLI::Command';
 
-    my $home = tempdir();
+    my $home    = tempdir();
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     #

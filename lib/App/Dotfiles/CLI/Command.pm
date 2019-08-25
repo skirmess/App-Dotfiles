@@ -40,7 +40,7 @@ sub run_init {
     my $runtime = $self->runtime;
 
     my $config = App::Dotfiles::Module::Config->new( runtime => $runtime, pull_url => $config_repo_url );
-    my $name = $config->name;
+    my $name   = $config->name;
 
     App::Dotfiles::Error->throw("Config '$name' exists already")
       if $config->does_repository_exist();
@@ -56,7 +56,7 @@ sub run_status {
     my ($self) = @_;
 
     my $runtime = $self->runtime;
-    my $config = App::Dotfiles::Module::Config->new( runtime => $runtime );
+    my $config  = App::Dotfiles::Module::Config->new( runtime => $runtime );
 
     App::Dotfiles::Error::E_NO_CONFIG_REPOSITORY->throw('config repository does not exist')
       if !$config->does_repository_exist();
@@ -111,7 +111,7 @@ sub run_update {
     my ($self) = @_;
 
     my $runtime = $self->runtime;
-    my $config = App::Dotfiles::Module::Config->new( runtime => $runtime );
+    my $config  = App::Dotfiles::Module::Config->new( runtime => $runtime );
 
     App::Dotfiles::Error::E_NO_CONFIG_REPOSITORY->throw()
       if !$config->does_repository_exist();
@@ -128,7 +128,7 @@ sub _update_modules {
     my ($self) = @_;
 
     my $runtime = $self->runtime;
-    my $config = App::Dotfiles::Module::Config->new( runtime => $runtime );
+    my $config  = App::Dotfiles::Module::Config->new( runtime => $runtime );
 
     my @modules = $config->get_modules();
 
@@ -211,7 +211,7 @@ Sven Kirmess <sven.kirmess@kzone.ch>
 
 =head1 COPYRIGHT AND LICENSE
 
-This software is Copyright (c) 2017-2018 by Sven Kirmess.
+This software is Copyright (c) 2017-2019 by Sven Kirmess.
 
 This is free software, licensed under:
 

@@ -32,7 +32,7 @@ sub main {
         my $home = tempdir();
 
         my $obj;
-        my $name = 'test';
+        my $name    = 'test';
         my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
         if ( $class eq 'App::Dotfiles::Module' ) {
@@ -40,13 +40,13 @@ sub main {
         }
         elsif ( $class eq 'App::Dotfiles::Module::Config' ) {
             $name = '.config';
-            $obj = new_ok( $class, [ runtime => $runtime ] );
+            $obj  = new_ok( $class, [ runtime => $runtime ] );
         }
         else {
             BAIL_OUT('INTERNAL ERROR');
         }
 
-        my $test_ws = File::Spec->catfile( $home, '.files', $name );
+        my $test_ws       = File::Spec->catfile( $home, '.files', $name );
         my $test_pull_url = 'http://www.example.net/test.git';
 
         # does_repository_exist
@@ -110,7 +110,7 @@ sub main {
         $git->push( '-q', '--set-upstream', 'origin', 'master' );
 
         # clone_repository
-        $home = tempdir();
+        $home    = tempdir();
         $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
         $obj = new_ok( $class, [ name => $name, runtime => $runtime ] );
@@ -176,7 +176,7 @@ sub main {
         _touch($f1);
 
         my $status_expected_ref = [ [ q{??}, $f1 ], ];
-        my @status = $obj->get_repository_status();
+        my @status              = $obj->get_repository_status();
         is_deeply( \@status, $status_expected_ref, 'returns correct modifications for dirty module' );
 
         my $f2 = File::Spec->catfile( $home, '.files', $name, 'test4.txt' );

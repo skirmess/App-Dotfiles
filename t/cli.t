@@ -64,7 +64,7 @@ sub main {
         my ( $opt_ref, $cmd ) = $obj->_get_main_options_and_command();
         is( $cmd, 'status', q{... returns command 'status'} );
         is_deeply( $opt_ref, {}, '... and no options' );
-        is_deeply( \@ARGV, [], '... @argv is empty' );
+        is_deeply( \@ARGV, [],   '... @argv is empty' );
     }
 
     #
@@ -76,7 +76,7 @@ sub main {
         my ( $opt_ref, $cmd ) = $obj->_get_main_options_and_command();
         is( $cmd, 'status', q{... returns command 'status'} );
         is_deeply( $opt_ref, { h => $home }, '... and the correct options' );
-        is_deeply( \@ARGV, [], '... @argv is empty' );
+        is_deeply( \@ARGV, [],               '... @argv is empty' );
     }
 
     #
@@ -88,7 +88,7 @@ sub main {
         my ( $opt_ref, $cmd ) = $obj->_get_main_options_and_command();
         is( $cmd, 'status', q{... returns command 'status'} );
         is_deeply( $opt_ref, { h => $home }, '... and the correct options' );
-        is_deeply( \@ARGV, [qw(-x)], '... @argv is reduced' );
+        is_deeply( \@ARGV, [qw(-x)],         '... @argv is reduced' );
     }
 
     #

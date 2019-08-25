@@ -20,7 +20,7 @@ sub main {
     my $home = path( tempdir() );
 
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
-    my $mod1 = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'mod1', target_path_prefix => 'mod1T' ] );
+    my $mod1    = new_ok( 'App::Dotfiles::Module',  [ runtime   => $runtime, name => 'mod1', target_path_prefix => 'mod1T' ] );
 
     my $mod1_path = path( $mod1->module_path );
     $mod1_path->mkpath;
@@ -324,7 +324,7 @@ sub main {
     #
     note('dir target blocked by foreign link');
 
-    $home = path( tempdir() );
+    $home    = path( tempdir() );
     $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
@@ -377,7 +377,7 @@ sub main {
     #
     note('fitting run restart');
 
-    $home = path( tempdir() );
+    $home    = path( tempdir() );
     $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
@@ -433,7 +433,7 @@ sub main {
 
     #
     note('link two modules');
-    $home = path( tempdir() );
+    $home    = path( tempdir() );
     $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     @mod = ();
@@ -480,7 +480,7 @@ sub main {
         is( readlink( $home->child('.vim/bundle/vim-plugin') ), '../../.files/vim-plugin', '... pointing to the correct file' );
 
         ok( !-l $home->child('.ssh') && -d _, q{Directory '.ssh' was not replaced} );
-        ok( -l $home->child('.ssh/sshss'), q{File '.ssh/sshss' is a link} );
+        ok( -l $home->child('.ssh/sshss'),    q{File '.ssh/sshss' is a link} );
         is( readlink( $home->child('.ssh/sshss') ), '../.files/sshss/bin/sshss', '... pointing to the correct file' );
 
         ok( -l $home->child('.kshrc'), q{File '.kshrc' is a link} );

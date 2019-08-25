@@ -25,7 +25,7 @@ use App::Dotfiles::CLI::Command;
 main();
 
 sub main {
-    my $home = tempdir();
+    my $home    = tempdir();
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     my $obj = new_ok( 'App::Dotfiles::CLI::Command', [ runtime => $runtime ] );
@@ -73,7 +73,7 @@ sub main {
 
     #
     note('~/.files/.config exists and is a Git repository with a valid remote');
-    my $repositories = tempdir();
+    my $repositories  = tempdir();
     my $remote_config = File::Spec->catfile( $repositories, 'config.git' );
     make_path($remote_config);
 

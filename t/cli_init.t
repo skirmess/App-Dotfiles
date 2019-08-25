@@ -23,7 +23,7 @@ use App::Dotfiles::CLI::Command;
 main();
 
 sub main {
-    my $home = tempdir();
+    my $home    = tempdir();
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     my $obj = new_ok( 'App::Dotfiles::CLI::Command', [ runtime => $runtime ] );
@@ -61,7 +61,7 @@ sub main {
     #
     note('no modules.ini file in repository');
 
-    $home = tempdir();
+    $home    = tempdir();
     $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
     my $remote_config = tempdir();

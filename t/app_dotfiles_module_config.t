@@ -26,7 +26,7 @@ sub main {
 
     #
     my $class = 'App::Dotfiles::Module::Config';
-    my $obj = new_ok( $class, [ runtime => $runtime ] );
+    my $obj   = new_ok( $class, [ runtime => $runtime ] );
 
     #
     note('get_modules() throws an error if no modules.ini file exists');
