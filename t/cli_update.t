@@ -68,7 +68,7 @@ sub main {
         chomp $stdout;
         isa_ok( $result[0], 'Git::Wrapper::Exception', '... throws an error if the config dir exists and is a Git repository but no remote repository is defined' );
         is( $stdout, q{Updating config '.config'}, '... prints the updating message' );
-        is( $stderr, q{}, '... and nothing to stderr' );
+        is( $stderr, q{},                          '... and nothing to stderr' );
     }
 
     #
@@ -95,7 +95,7 @@ sub main {
         chomp $stdout;
         like( $result[0], "/ \QMissing config file '$home/.files/.config/modules.ini'\E /xsm", '... throws an exception if there is no modules.ini file' );
         is( $stdout, q{Updating config '.config'}, '... updating message' );
-        is( $stderr, q{}, '... and nothing to stderr' );
+        is( $stderr, q{},                          '... and nothing to stderr' );
     }
 
     #

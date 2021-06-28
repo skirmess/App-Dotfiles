@@ -21,7 +21,7 @@ sub main {
     my $home = tempdir();
 
     my $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
-    my $obj = new_ok( $class, [ runtime => $runtime ] );
+    my $obj     = new_ok( $class,                   [ runtime   => $runtime ] );
 
     # _read_first_link_and_realpath_nd
     $home = path($home);

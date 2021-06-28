@@ -295,7 +295,7 @@ sub main {
 
     $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
-    @mod = ();
+    @mod    = ();
     $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module1', target_path_prefix => path('target/T') ] );
     $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module2', target_path_prefix => path('target/T') ] );
 
@@ -329,7 +329,7 @@ sub main {
 
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
 
-    @mod = ();
+    @mod    = ();
     $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module1', target_path_prefix => path('target/T') ] );
     $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module2', target_path_prefix => path('target/T') ] );
 
@@ -382,7 +382,7 @@ sub main {
 
     $linker = new_ok( 'App::Dotfiles::Linker', [ runtime => $runtime ] );
 
-    @mod = ();
+    @mod    = ();
     $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module0' ] );
     $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'module1' ] );
 
@@ -436,11 +436,11 @@ sub main {
     $home    = path( tempdir() );
     $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
 
-    @mod = ();
+    @mod    = ();
     $mod[0] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'vim' ] );
     $mod[1] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'vim-plugin', target_path_prefix => path('.vim/bundle/vim-plugin') ] );
-    $mod[2] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'sshss', source_path_prefix => path('bin'), target_path_prefix => path('.ssh') ] );
-    $mod[3] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'profile', source_path_prefix => path('ksh93') ] );
+    $mod[2] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'sshss',      source_path_prefix => path('bin'), target_path_prefix => path('.ssh') ] );
+    $mod[3] = new_ok( 'App::Dotfiles::Module', [ runtime => $runtime, name => 'profile',    source_path_prefix => path('ksh93') ] );
 
     @mod_path = ();
     for my $i ( 0 .. 3 ) {

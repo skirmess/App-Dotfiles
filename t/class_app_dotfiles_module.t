@@ -141,7 +141,7 @@ sub main {
         is( $obj->runtime->dotfiles_path, File::Spec->catfile( $home, '.files' ), '->runtime->dotfiles_path is initialized correctly' );
         dies_ok { $obj->runtime->dotfiles_path('abc') } '... is a read-only accessor';
         is( $obj2->runtime->dotfiles_path, File::Spec->catfile( $home2, '.files' ), '->runtime->dotfiles_path is initialized correctly' );
-        is( $obj3->runtime->dotfiles_path, $dotfiles_path3, '->runtime->dotfiles_path is initialized correctly' );
+        is( $obj3->runtime->dotfiles_path, $dotfiles_path3,                         '->runtime->dotfiles_path is initialized correctly' );
 
         is( $obj->name, $name, q{attribute 'name'} );
         dies_ok { $obj->name('abc') } '... is a read-only accessor';

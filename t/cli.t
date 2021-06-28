@@ -64,7 +64,7 @@ sub main {
         my ( $opt_ref, $cmd ) = $obj->_get_main_options_and_command();
         is( $cmd, 'status', q{... returns command 'status'} );
         is_deeply( $opt_ref, {}, '... and no options' );
-        is_deeply( \@ARGV, [],   '... @argv is empty' );
+        is_deeply( \@ARGV,   [], '... @argv is empty' );
     }
 
     #
@@ -76,7 +76,7 @@ sub main {
         my ( $opt_ref, $cmd ) = $obj->_get_main_options_and_command();
         is( $cmd, 'status', q{... returns command 'status'} );
         is_deeply( $opt_ref, { h => $home }, '... and the correct options' );
-        is_deeply( \@ARGV, [],               '... @argv is empty' );
+        is_deeply( \@ARGV,   [],             '... @argv is empty' );
     }
 
     #
@@ -88,7 +88,7 @@ sub main {
         my ( $opt_ref, $cmd ) = $obj->_get_main_options_and_command();
         is( $cmd, 'status', q{... returns command 'status'} );
         is_deeply( $opt_ref, { h => $home }, '... and the correct options' );
-        is_deeply( \@ARGV, [qw(-x)],         '... @argv is reduced' );
+        is_deeply( \@ARGV,   [qw(-x)],       '... @argv is reduced' );
     }
 
     #
@@ -314,7 +314,7 @@ sub main {
         chomp $stdout;
         isa_ok( $result[0], 'Git::Wrapper::Exception', '... throws an Git::Wrapper::Exception error with invalid repository' );
         is( $stdout, q{Initializing config '.config'}, '... prints initializing message' );
-        is( $stderr, q{}, '... and nothing to stderr' );
+        is( $stderr, q{},                              '... and nothing to stderr' );
 
         is_deeply( \@ARGV, [], '... @ARGV is empty' );
     }

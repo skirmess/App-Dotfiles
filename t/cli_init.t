@@ -83,7 +83,7 @@ sub main {
         like( $result[0], "/ \QMissing config file '$home/.files/.config/modules.ini\E /xsm", 'run_init() throws an error if the config repository contains no modules.ini file' );
         chomp $stdout;
         is( $stdout, q{Initializing config '.config'}, '... prints initialization message to stdout' );
-        is( $stderr, q{}, '... and nothing to stderr' );
+        is( $stderr, q{},                              '... and nothing to stderr' );
     }
 
     #
@@ -92,8 +92,8 @@ sub main {
     $git->commit( '-q', '-m', 'test' );
 
     $home    = tempdir();
-    $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
-    $obj     = new_ok( 'App::Dotfiles::CLI::Command', [ runtime => $runtime ] );
+    $runtime = new_ok( 'App::Dotfiles::Runtime',      [ home_path => $home ] );
+    $obj     = new_ok( 'App::Dotfiles::CLI::Command', [ runtime   => $runtime ] );
 
     ok( !-e File::Spec->catfile( $home, '.files', '.config', 'modules.ini' ), 'config repo does not exist' );
     {
@@ -143,8 +143,8 @@ EOF
     $git->commit( '-q', '-m', 'test' );
 
     $home    = tempdir();
-    $runtime = new_ok( 'App::Dotfiles::Runtime', [ home_path => $home ] );
-    $obj     = new_ok( 'App::Dotfiles::CLI::Command', [ runtime => $runtime ] );
+    $runtime = new_ok( 'App::Dotfiles::Runtime',      [ home_path => $home ] );
+    $obj     = new_ok( 'App::Dotfiles::CLI::Command', [ runtime   => $runtime ] );
 
     my @files = (
         File::Spec->catfile( $home, '.files', '.config', 'modules.ini' ),

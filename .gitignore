@@ -4,5 +4,5 @@
 .build
 .perlcritic_package.yml
 App-Dotfiles-*
-dzil-inc
+dzil-bundle
 tmp

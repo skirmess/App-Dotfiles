@@ -158,7 +158,7 @@ sub main {
         $git->push('-q');
 
         if ( $class ne 'App::Dotfiles::Module::Config' ) {
-            ok( -e File::Spec->catfile( $home, '.files', 'test', 'test.txt' ), q{'test.txt' exists} );
+            ok( -e File::Spec->catfile( $home,  '.files', 'test', 'test.txt' ),  q{'test.txt' exists} );
             ok( !-e File::Spec->catfile( $home, '.files', 'test', 'test3.txt' ), q{'test3.txt' does not exist} );
         }
 
