@@ -4,7 +4,7 @@ use 5.006;
 use strict;
 use warnings;
 
-our $VERSION = 0.001;
+our $VERSION = '0.001';
 
 use custom::failures qw(E_NO_CONFIG_REPOSITORY E_REPOSITORY_IS_DIRTY E_USAGE);
 
