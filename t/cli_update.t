@@ -8,16 +8,18 @@ use Carp;
 
 use Test::More 0.88;
 use Test::Fatal;
-use Test::TempDir::Tiny;
 
-use File::Spec;
-use File::Path qw(make_path);
+use Cwd            ();
+use File::Basename ();
+use File::Spec     ();
+use lib File::Spec->catdir( File::Basename::dirname( Cwd::abs_path __FILE__ ), 'lib' );
 
-use Git::Wrapper;
-
-use Path::Tiny;
+use Local::Test::TempDir qw(tempdir);
 
 use Capture::Tiny qw(capture);
+use File::Path qw(make_path);
+use Git::Wrapper;
+use Path::Tiny;
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::CLI::Command;

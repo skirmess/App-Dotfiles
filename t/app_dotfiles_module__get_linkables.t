@@ -8,7 +8,13 @@ use Path::Tiny;
 
 use Test::More 0.88;
 use Test::Fatal;
-use Test::TempDir::Tiny;
+
+use Cwd            ();
+use File::Basename ();
+use File::Spec     ();
+use lib File::Spec->catdir( File::Basename::dirname( Cwd::abs_path __FILE__ ), 'lib' );
+
+use Local::Test::TempDir qw(tempdir);
 
 use App::Dotfiles::Runtime;
 use App::Dotfiles::Module;
@@ -100,6 +106,10 @@ sub main {
 
     $obj       = new_ok( $class, [ runtime => $runtime, name => $name, source_path_prefix => 'dir2' ] );
     $exception = exception { $obj->get_linkables(q{.}) };
+
+    # allow Dist::Zilla to clean up the file
+    _chmod( 0755, $test_ws->child('dir2') );
+
     note($exception);
     isa_ok( $exception, 'App::Dotfiles::Error', 'get_linkables() throws an exception when run with a source_path_prefix on a dir without permissions' );
     like( $exception, "/ \QUnable to read directory '$test_ws\E /xsm", '... with correct message' );

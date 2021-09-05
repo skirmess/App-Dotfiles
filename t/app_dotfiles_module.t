@@ -9,7 +9,12 @@ use File::Spec;
 
 use Test::More 0.88;
 use Test::Fatal;
-use Test::TempDir::Tiny;
+
+use Cwd            ();
+use File::Basename ();
+use lib File::Spec->catdir( File::Basename::dirname( Cwd::abs_path __FILE__ ), 'lib' );
+
+use Local::Test::TempDir qw(tempdir);
 
 use Git::Wrapper;
 

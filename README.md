@@ -33,7 +33,7 @@ repository and recreate the symlink.
     Specifies the directory that should be used as your home directory. This
     is the directory in which the dotfiles will be managed.
 
-    If not specified, **dotf** defaults to your home directory as returned by [File::HomeDir](https://metacpan.org/pod/File::HomeDir).
+    If not specified, **dotf** defaults to your home directory as returned by [File::HomeDir](https://metacpan.org/pod/File%3A%3AHomeDir).
 
 # SUBCOMMANDS
 
@@ -216,7 +216,7 @@ Otherwise remove the command string again. Do not lock yourself out!
 
 - HOME
 
-    On UNIX used by [File::HomeDir](https://metacpan.org/pod/File::HomeDir) as primary method to identify your home
+    On UNIX used by [File::HomeDir](https://metacpan.org/pod/File%3A%3AHomeDir) as primary method to identify your home
     directory.
 
     The home directory is where **dotf** places the `.files` directory which
