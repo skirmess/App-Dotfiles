@@ -87,12 +87,4 @@ L<https://github.com/skirmess/App-Dotfiles>
 
 Sven Kirmess <sven.kirmess@kzone.ch>
 
-=head1 COPYRIGHT AND LICENSE
-
-This software is Copyright (c) 2017-2021 by Sven Kirmess.
-
-This is free software, licensed under:
-
-  The (two-clause) FreeBSD License
-
 =cut
